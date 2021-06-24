@@ -35,7 +35,7 @@ public class JLobby extends JFrame {
 			public void run() {
 				try {
 					JLobby frame = new JLobby();
-					frame.setTitle("Chat");
+					frame.setTitle("Lobby");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
