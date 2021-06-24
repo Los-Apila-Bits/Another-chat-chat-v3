@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import cliente.*;
+import comandos.AbandonarSala;
 
 public class JChatCliente extends JFrame {
 
@@ -34,20 +35,6 @@ public class JChatCliente extends JFrame {
 	private JButton btnEnviar;
 	private JTextArea textArea;
 	private JScrollPane scrollPane;
-	
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					JChatCliente frame = new JChatCliente();
-//					frame.setTitle("Lobby");
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
 
 	public JChatCliente(Cliente cliente, String nombreSala) {
 		this.cliente = cliente;
@@ -55,7 +42,7 @@ public class JChatCliente extends JFrame {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				//cliente.cerrarSocket();
+				cliente.ejecutarComando(new AbandonarSala(nombreSala));
 			}
 		});
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

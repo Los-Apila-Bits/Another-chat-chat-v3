@@ -12,8 +12,8 @@ public class Paquete implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Socket cliente;
 	private String nombre;
-	private ObjectInputStream entrada;
-	private ObjectOutputStream salida;
+//	private ObjectInputStream entrada;
+//	private ObjectOutputStream salida;
 	
 	public Paquete(Cliente cliente) {
 		//this.cliente = cliente.getSocket();
@@ -25,6 +25,14 @@ public class Paquete implements Serializable {
 
 	public String getNombre() {
 		return this.nombre;
+	}
+	
+	public Socket getSocket() {
+		return this.cliente;
+	}
+	
+	public void setSocket(Socket cliente) {
+		this.cliente = cliente;
 	}
 
 //	public Socket getCliente() {

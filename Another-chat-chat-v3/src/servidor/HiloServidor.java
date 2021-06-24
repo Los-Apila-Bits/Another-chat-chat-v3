@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import comandos.AbandonarSala;
 import comandos.Comando;
 import comandos.CrearSala;
 import comandos.UnirseSala;
@@ -15,8 +16,8 @@ import comandos.UnirseSala;
 public class HiloServidor extends Thread {
 
 	private Socket cliente;
-	Comando comando;
-
+	private Comando comando;
+	private Paquete pcliente;
 	public HiloServidor(Socket cliente) {
 		this.cliente = cliente;
 	}
@@ -45,6 +46,12 @@ public class HiloServidor extends Thread {
 				case Comando.UNIRSE_SALA: {
 					UnirseSala cmd = (UnirseSala) comando;
 					comando_unise_sala(cmd.nombreSala, cmd.pcliente);
+					break;
+				}
+				case Comando.ABANDONAR_SALA: {
+					AbandonarSala cmd = (AbandonarSala) comando;
+					comando_abandonar_sala(cmd.sala);
+					break;
 				}
 				default:
 					throw new IllegalArgumentException("Unexpected value: " + caso);
@@ -85,11 +92,18 @@ public class HiloServidor extends Thread {
 	}
 	
 	public void comando_unise_sala(String nombreSala, Paquete pcliente) throws IOException {
+		pcliente.setSocket(cliente);
+		this.pcliente = pcliente;
 		Servidor.getSalas().get(nombreSala).add(pcliente);
 		Servidor.getSalidas().get(cliente).writeInt(Comando.UNIRSE_SALA);
 		Servidor.getSalidas().get(cliente).flush();
 		Servidor.getSalidas().get(cliente).writeUTF(nombreSala);
 		Servidor.getSalidas().get(cliente).flush();
+		comando_conectarse();
+	}
+	
+	public void comando_abandonar_sala(String nombreSala) throws IOException {
+		Servidor.getSalas().get(nombreSala).remove(pcliente);
 		comando_conectarse();
 	}
 }
