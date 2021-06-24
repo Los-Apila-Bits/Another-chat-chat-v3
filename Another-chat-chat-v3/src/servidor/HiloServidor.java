@@ -12,41 +12,41 @@ public class HiloServidor extends Thread {
 
 	private Socket cliente;
 	private List<Socket> clientes;
-	ObjectInputStream entrada;
-	ObjectOutputStream salida;
 	Comando comando;
 
 	public HiloServidor(Socket cliente, List<Socket> clientes) {
 		this.cliente = cliente;
 		this.clientes = clientes;
-		try {
-			this.entrada = new ObjectInputStream(this.cliente.getInputStream());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public void run() {
-		while (true) {
-			try {
-				this.comando = (Comando) entrada.readObject();
-				if (comando.procesar_comando()==1) {
-					for (Socket socket : clientes) {
-						salida = new ObjectOutputStream(socket.getOutputStream());
-						salida.writeObject(Servidor.getSalas());
-						salida.flush();
-						salida.close();
-					}			
+		ObjectInputStream entrada;
+		ObjectOutputStream salida;
+		try {
+			entrada = new ObjectInputStream(this.cliente.getInputStream());
+			while (true) {
+				try {
+					this.comando = (Comando) entrada.readObject();
+					if (comando.procesar_comando()==1) {
+						for (Socket socket : clientes) {
+							salida = new ObjectOutputStream(socket.getOutputStream());
+							salida.writeObject(Servidor.getSalas());
+							salida.flush();
+							salida.close();
+						}			
+					}
+					if (comando.procesar_comando()==2) {
+						for (Socket socket : clientes) {
+							salida = new ObjectOutputStream(socket.getOutputStream());
+							salida.writeObject(Servidor.getSalas());
+						}			
+					}
+				} catch (ClassNotFoundException | IOException e) {
+					e.printStackTrace();
 				}
-				if (comando.procesar_comando()==2) {
-					for (Socket socket : clientes) {
-						salida = new ObjectOutputStream(socket.getOutputStream());
-						salida.writeObject(Servidor.getSalas());
-					}			
-				}
-			} catch (ClassNotFoundException | IOException e) {
-				e.printStackTrace();
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }
