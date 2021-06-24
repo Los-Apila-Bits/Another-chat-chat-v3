@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JList;
@@ -102,7 +103,9 @@ public class JLobby extends JFrame {
 		getContentPane().add(lblSalas);
 		unirseSalaButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				cliente.ejecutarComando(new UnirseSala(list.getSelectedValue(), new Paquete(cliente)));
+				String nombresala = list.getSelectedValue();
+				nombresala = nombresala.substring(0, nombresala.indexOf(" ("));
+				cliente.ejecutarComando(new UnirseSala(nombresala, new Paquete(cliente)));
 			}
 		});
 	}

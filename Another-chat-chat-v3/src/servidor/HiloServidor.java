@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 import comandos.Comando;
 import comandos.CrearSala;
@@ -55,17 +57,29 @@ public class HiloServidor extends Thread {
 	}
 
 	public void comando_conectarse() throws IOException {
-		Servidor.getSalidas().get(cliente).writeInt(Comando.CONECTARSE);
 		Servidor.getSalidas().get(cliente).flush();
-		Servidor.getSalidas().get(cliente).writeObject(new ArrayList<String>(Servidor.getSalas().keySet()));
-		Servidor.getSalidas().get(cliente).flush();
+		Set<String> keySalas = Servidor.getSalas().keySet();
+		List<String> salas = new ArrayList<String>();
+		for (String keySala : keySalas) {
+			salas.add(keySala+" ("+Servidor.getSalas().get(keySala).size()+")");
+		}
+		for (Socket socket : Servidor.getSalidas().keySet()) {
+			Servidor.getSalidas().get(socket).writeInt(Comando.CONECTARSE);
+			Servidor.getSalidas().get(socket).writeObject(salas);
+			Servidor.getSalidas().get(socket).flush();
+		}
 	}
 
 	public void comando_crear_sala(String nombreSala) throws IOException {
 		Servidor.getSalas().put(nombreSala, new LinkedList<Paquete>());
+		Set<String> keySalas = Servidor.getSalas().keySet();
+		List<String> salas = new ArrayList<String>();
+		for (String keySala : keySalas) {
+			salas.add(keySala+" ("+Servidor.getSalas().get(keySala).size()+")");
+		}
 		for (Socket socket : Servidor.getSalidas().keySet()) {
 			Servidor.getSalidas().get(socket).writeInt(Comando.CREAR_SALA);
-			Servidor.getSalidas().get(socket).writeObject(new ArrayList<String>(Servidor.getSalas().keySet()));
+			Servidor.getSalidas().get(socket).writeObject(salas);
 			Servidor.getSalidas().get(socket).flush();
 		}
 	}
@@ -76,5 +90,6 @@ public class HiloServidor extends Thread {
 		Servidor.getSalidas().get(cliente).flush();
 		Servidor.getSalidas().get(cliente).writeUTF(nombreSala);
 		Servidor.getSalidas().get(cliente).flush();
+		comando_conectarse();
 	}
 }
