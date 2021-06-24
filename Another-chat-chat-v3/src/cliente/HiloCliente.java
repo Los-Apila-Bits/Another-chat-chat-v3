@@ -2,20 +2,23 @@ package cliente;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import comandos.Comando;
+import ventanas.JChatCliente;
 import ventanas.JLobby;
 
 public class HiloCliente extends Thread {
 
 	private ObjectInputStream entrada;
 	private JLobby menu;
-	// private JChatCliente ventana;
+	private List<JChatCliente> chats;
 
 	public HiloCliente(ObjectInputStream entrada, JLobby menu) {
 		this.entrada = entrada;
 		this.menu = menu;
+		chats = new ArrayList<JChatCliente>();
 	}
 
 	public void run() {
@@ -30,6 +33,10 @@ public class HiloCliente extends Thread {
 				}
 				case Comando.CREAR_SALA: {
 					crear_sala();
+					break;
+				}
+				case Comando.UNIRSE_SALA: {
+					unirse_sala();
 					break;
 				}
 				default:
@@ -52,5 +59,11 @@ public class HiloCliente extends Thread {
 		@SuppressWarnings("unchecked")
 		List<String> salas = (List<String>) entrada.readObject();
 		menu.actualizar_salas(salas);
+	}
+	
+	private void unirse_sala() throws IOException {
+		String sala = entrada.readUTF();
+		chats.add(new JChatCliente(menu.getCliente(), sala));
+		chats.get(0).run();
 	}
 }

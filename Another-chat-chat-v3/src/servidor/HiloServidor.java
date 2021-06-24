@@ -8,6 +8,7 @@ import java.util.LinkedList;
 
 import comandos.Comando;
 import comandos.CrearSala;
+import comandos.UnirseSala;
 
 public class HiloServidor extends Thread {
 
@@ -39,6 +40,10 @@ public class HiloServidor extends Thread {
 					comando_crear_sala(cmd.nombreSala);
 					break;
 				}
+				case Comando.UNIRSE_SALA: {
+					UnirseSala cmd = (UnirseSala) comando;
+					comando_unise_sala(cmd.nombreSala, cmd.pcliente);
+				}
 				default:
 					throw new IllegalArgumentException("Unexpected value: " + caso);
 				}
@@ -63,5 +68,13 @@ public class HiloServidor extends Thread {
 			Servidor.getSalidas().get(socket).writeObject(new ArrayList<String>(Servidor.getSalas().keySet()));
 			Servidor.getSalidas().get(socket).flush();
 		}
+	}
+	
+	public void comando_unise_sala(String nombreSala, Paquete pcliente) throws IOException {
+		Servidor.getSalas().get(nombreSala).add(pcliente);
+		Servidor.getSalidas().get(cliente).writeInt(Comando.UNIRSE_SALA);
+		Servidor.getSalidas().get(cliente).flush();
+		Servidor.getSalidas().get(cliente).writeUTF(nombreSala);
+		Servidor.getSalidas().get(cliente).flush();
 	}
 }

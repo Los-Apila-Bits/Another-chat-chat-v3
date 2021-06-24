@@ -31,6 +31,22 @@ public class Cliente  {
 			e.printStackTrace();
 		}
 	}
+	
+	public ObjectInputStream getEntrada() {
+		return this.entrada;
+	}
+	
+	public ObjectOutputStream getSalida() {
+		return this.salida;
+	}
+	
+	public String getNombre() {
+		return this.nombre;
+	}
+	
+	public Socket getSocket() {
+		return this.socket;
+	}
 
 	public void ejecutarComando(Comando comando) {
 		try {
@@ -41,7 +57,6 @@ public class Cliente  {
 		}
 	}
 	
-
 	public void inicializarHiloCliente(JLobby menu) {
 			new HiloCliente(entrada, menu).start();
 	}

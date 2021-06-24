@@ -16,6 +16,7 @@ import javax.swing.ScrollPaneConstants;
 
 import cliente.Cliente;
 import comandos.*;
+import servidor.Paquete;
 
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -101,7 +102,7 @@ public class JLobby extends JFrame {
 		getContentPane().add(lblSalas);
 		unirseSalaButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//run();
+				cliente.ejecutarComando(new UnirseSala(list.getSelectedValue(), new Paquete(cliente)));
 			}
 		});
 	}
@@ -117,6 +118,10 @@ public class JLobby extends JFrame {
 
 	public JList<String> getLista() {
 		return this.list;
+	}
+	
+	public Cliente getCliente() {
+		return this.cliente;
 	}
 	
 	public JLobby getLobby() {
