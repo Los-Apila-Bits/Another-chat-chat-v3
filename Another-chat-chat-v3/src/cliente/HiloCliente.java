@@ -2,6 +2,7 @@ package cliente;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,14 +24,13 @@ public class HiloCliente extends Thread{
 	
 	@SuppressWarnings("unchecked")
 	public void run() {
-		Map<String, LinkedList<Paquete>> salas;
-		Set<String> nombSalas;
+		List<String> salas;
 		DefaultListModel<String> model = new DefaultListModel<String>();
 		while(true) {
 			try {
-				salas = (Map<String, LinkedList<Paquete>>) entrada.readObject();
-				nombSalas = salas.keySet();
-				for (String string : nombSalas) {
+				salas = (List<String>) entrada.readObject();
+				model.clear();
+				for (String string : salas) {
 					model.addElement(string);
 				}
 				menu.getLista().setModel(model);

@@ -4,22 +4,19 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class Servidor {
 	
 	private ServerSocket server;
-	private static Map<String, LinkedList<Paquete>> salas = new HashMap<>();
-	private static Map<Socket,ObjectOutputStream> clientes;
+	private static Map<String, LinkedList<Paquete>> salas = new HashMap<String, LinkedList<Paquete>>();
+	private static Map<Socket,ObjectOutputStream> clientes = new HashMap<Socket,ObjectOutputStream>();;
 	
 	public Servidor(int puerto) {
 		try {
-			server = new ServerSocket(puerto);
-			clientes = new HashMap<Socket,ObjectOutputStream>();	
+			server = new ServerSocket(puerto);	
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -30,9 +27,8 @@ public class Servidor {
 		try {
 			while(true) {
 				socket = server.accept();
-				ObjectOutputStream aux = new ObjectOutputStream(socket.getOutputStream());
-				aux.flush();
-				clientes.put(socket,aux);
+				ObjectOutputStream salida = new ObjectOutputStream(socket.getOutputStream());
+				clientes.put(socket, salida);
 				new HiloServidor(socket).start();
 			}
 		} catch (IOException e) {
