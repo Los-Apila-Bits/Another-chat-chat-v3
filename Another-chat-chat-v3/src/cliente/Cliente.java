@@ -12,15 +12,16 @@ import ventanas.JLobby;
 public class Cliente  {
 	
 	private Socket socket;
+	public final String nombre;
 	private int puerto;
 	private String ip;
 	private ObjectOutputStream salida;
 	private ObjectInputStream entrada;
 	
-	public Cliente(int puerto, String ip) {
+	public Cliente(int puerto, String ip,String nombre) {
 		this.puerto = puerto;
 		this.ip = ip;
-
+		this.nombre = nombre;
 		try {
 			socket = new Socket(this.ip, this.puerto);
 			 salida = new ObjectOutputStream(socket.getOutputStream());

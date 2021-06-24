@@ -72,8 +72,8 @@ public class JLobby extends JFrame {
 		mnNewMenu.add(MenuConectar);
 		MenuConectar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//String nombre = JOptionPane.showInputDialog("Ingrese nombre de usuario");
-				cliente = new Cliente(1200,"localhost");
+				String nombre = JOptionPane.showInputDialog("Ingrese nombre de usuario");
+				cliente = new Cliente(1200,"localhost",nombre);
 				cliente.inicializarHiloCliente(getLobby());
 				cliente.ejecutarComando(new Conectarse());
 			}
