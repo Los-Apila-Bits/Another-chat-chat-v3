@@ -1,14 +1,9 @@
 package cliente;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.swing.DefaultListModel;
-
-import servidor.Paquete;
 import ventanas.JLobby;
 
 public class HiloCliente extends Thread{
