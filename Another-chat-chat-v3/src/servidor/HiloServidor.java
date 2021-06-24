@@ -89,13 +89,14 @@ public class HiloServidor extends Thread {
 		this.pcliente = pcliente;
 		this.pcliente.setSocket(cliente);
 		this.pcliente.setSalida(Servidor.getSalidas().get(cliente));
-		Servidor.getSalidas().get(cliente).flush();
 		Set<String> keySalas = Servidor.getSalas().keySet();
 		List<String> salas = new ArrayList<String>();
 		for (String keySala : keySalas) {
 			salas.add(keySala+" ("+Servidor.getSalas().get(keySala).size()+")");
 		}
+		Servidor.getSalidas().get(cliente).flush();
 		Servidor.getSalidas().get(cliente).writeInt(Comando.CONECTARSE);
+		Servidor.getSalidas().get(cliente).flush();
 		Servidor.getSalidas().get(cliente).writeObject(salas);
 		Servidor.getSalidas().get(cliente).flush();
 		
@@ -109,6 +110,7 @@ public class HiloServidor extends Thread {
 			salas.add(keySala+" ("+Servidor.getSalas().get(keySala).size()+")");
 		}
 		for (Socket socket : Servidor.getSalidas().keySet()) {
+			Servidor.getSalidas().get(cliente).flush();
 			Servidor.getSalidas().get(socket).writeInt(Comando.CREAR_SALA);
 			Servidor.getSalidas().get(socket).writeObject(salas);
 			Servidor.getSalidas().get(socket).flush();
@@ -119,6 +121,7 @@ public class HiloServidor extends Thread {
 		if(pcliente.getSalasActivas()<3) {
 			Servidor.getSalas().get(nombreSala).add(pcliente);
 			pcliente.conectarSala();
+			Servidor.getSalidas().get(cliente).flush();
 			Servidor.getSalidas().get(cliente).writeInt(Comando.UNIRSE_SALA);
 			Servidor.getSalidas().get(cliente).flush();
 			Servidor.getSalidas().get(cliente).writeUTF(nombreSala);
@@ -131,6 +134,7 @@ public class HiloServidor extends Thread {
 		Servidor.getSalas().get(nombreSala).remove(pcliente);
 		pcliente.desconectarSala();
 		comando_actualizar_salas();
+		Servidor.getSalidas().get(cliente).flush();
 		Servidor.getSalidas().get(cliente).writeInt(Comando.ABANDONAR_SALA);
 		Servidor.getSalidas().get(cliente).flush();
 		Servidor.getSalidas().get(cliente).writeUTF(nombreSala);
@@ -140,6 +144,7 @@ public class HiloServidor extends Thread {
 	public void comando_enviar_msj(String nombreSala,String msj) throws IOException{
 		List<Paquete> receptores = Servidor.getSalas().get(nombreSala);
 		for (Paquete receptor : receptores) {
+			receptor.getSalida().flush();
 			receptor.getSalida().writeInt(Comando.ENVIAR_MSJ);
 			receptor.getSalida().flush();
 			receptor.getSalida().writeUTF(nombreSala);

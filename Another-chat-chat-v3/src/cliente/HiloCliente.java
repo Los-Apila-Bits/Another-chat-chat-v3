@@ -53,7 +53,7 @@ public class HiloCliente extends Thread {
 					break;
 				}
 				default:
-					throw new IllegalArgumentException("Unexpected value: " + caso);
+					break;
 				}
 			}
 		} catch (ClassNotFoundException | IOException e) {
@@ -99,7 +99,7 @@ public class HiloCliente extends Thread {
 	}
 	
 	private void abandonar_sala() throws IOException {
-		//String sala = entrada.readUTF();
+		String sala = entrada.readUTF();
 		salasConectadas--;
 //		for (JChatCliente chat : chats) {
 //			if(chat.getSala().equals(sala)) {
