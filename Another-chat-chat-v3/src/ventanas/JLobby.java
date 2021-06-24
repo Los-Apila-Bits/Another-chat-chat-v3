@@ -65,16 +65,18 @@ public class JLobby extends JFrame {
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setBounds(0, 0, 342, 22);
 		getContentPane().add(menuBar);
-		JMenu mnNewMenu = new JMenu("Opciones");
-		menuBar.add(mnNewMenu);
+		JMenu mnOpciones = new JMenu("Opciones");
+		menuBar.add(mnOpciones);
 		JMenuItem MenuConectar = new JMenuItem("Conectar");
-		mnNewMenu.add(MenuConectar);
+		mnOpciones.add(MenuConectar);
 		MenuConectar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String nombre = JOptionPane.showInputDialog("Ingrese nombre de usuario");
 				cliente = new Cliente(1200,"localhost",nombre);
+				mnOpciones.setEnabled(false);
 				cliente.inicializarHiloCliente(getLobby());
 				cliente.ejecutarComando(new Conectarse());
+				
 			}
 		});
 	}
