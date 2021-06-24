@@ -12,6 +12,7 @@ import comandos.AbandonarSala;
 import comandos.Comando;
 import comandos.Conectarse;
 import comandos.CrearSala;
+import comandos.EnviarMsj;
 import comandos.UnirseSala;
 
 public class HiloServidor extends Thread {
@@ -50,6 +51,11 @@ public class HiloServidor extends Thread {
 					comando_unise_sala(cmd.nombreSala);
 					break;
 				}
+				case Comando.ENVIAR_MSJ: {
+					EnviarMsj cmd = (EnviarMsj) comando;
+					comando_enviar_msj(cmd.nombreSala,cmd.msj);
+					break;
+				}
 				case Comando.ABANDONAR_SALA: {
 					AbandonarSala cmd = (AbandonarSala) comando;
 					comando_abandonar_sala(cmd.sala);
@@ -82,6 +88,7 @@ public class HiloServidor extends Thread {
 	public void comando_conectarse(Paquete pcliente) throws IOException {
 		this.pcliente = pcliente;
 		this.pcliente.setSocket(cliente);
+		this.pcliente.setSalida(Servidor.getSalidas().get(cliente));
 		Servidor.getSalidas().get(cliente).flush();
 		Set<String> keySalas = Servidor.getSalas().keySet();
 		List<String> salas = new ArrayList<String>();
@@ -117,8 +124,7 @@ public class HiloServidor extends Thread {
 			Servidor.getSalidas().get(cliente).writeUTF(nombreSala);
 			Servidor.getSalidas().get(cliente).flush();
 			comando_actualizar_salas();
-		}else
-			Servidor.getSalidas().get(cliente).writeInt(Comando.UNIRSE_SALA);
+		}
 	}
 	
 	public void comando_abandonar_sala(String nombreSala) throws IOException {
@@ -129,5 +135,17 @@ public class HiloServidor extends Thread {
 		Servidor.getSalidas().get(cliente).flush();
 		Servidor.getSalidas().get(cliente).writeUTF(nombreSala);
 		Servidor.getSalidas().get(cliente).flush();
+	}
+	
+	public void comando_enviar_msj(String nombreSala,String msj) throws IOException{
+		List<Paquete> receptores = Servidor.getSalas().get(nombreSala);
+		for (Paquete receptor : receptores) {
+			receptor.getSalida().writeInt(Comando.ENVIAR_MSJ);
+			receptor.getSalida().flush();
+			receptor.getSalida().writeUTF(nombreSala);
+			receptor.getSalida().flush();
+			receptor.getSalida().writeUTF(msj);
+			receptor.getSalida().flush();
+		}
 	}
 }

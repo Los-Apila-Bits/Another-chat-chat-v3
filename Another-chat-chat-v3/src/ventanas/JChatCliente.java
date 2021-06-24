@@ -18,12 +18,12 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import cliente.*;
 import comandos.AbandonarSala;
+import comandos.EnviarMsj;
 
 public class JChatCliente extends JFrame {
 
@@ -45,7 +45,7 @@ public class JChatCliente extends JFrame {
 				cliente.ejecutarComando(new AbandonarSala(nombreSala));
 			}
 		});
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		//setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -107,7 +107,7 @@ public class JChatCliente extends JFrame {
 		DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 		String formatDateTime = now.format(format);
 		if (!message.isEmpty())
-//			cliente.ejecutarComando();
+			cliente.ejecutarComando(new EnviarMsj(nombreSala, "[" + formatDateTime + "] " + cliente.getNombre() + ": " + message + "\n"));
 		return;
 	}
 
@@ -127,5 +127,4 @@ public class JChatCliente extends JFrame {
 			this.setTitle("Chat");
 			this.setVisible(true);
 	}
-
 }

@@ -44,11 +44,14 @@ public class HiloCliente extends Thread {
 					abandonar_sala();
 					break;
 				}
-				case Comando.ACTUALIZAR_SALAS:{
+				case Comando.ACTUALIZAR_SALAS: {
 					actualizar_sala();
 					break;
 				}
-
+				case Comando.ENVIAR_MSJ: {
+					enviar_msj();
+					break;
+				}
 				default:
 					throw new IllegalArgumentException("Unexpected value: " + caso);
 				}
@@ -84,12 +87,19 @@ public class HiloCliente extends Thread {
 			chats.get(salasConectadas).run();
 			salasConectadas++;
 		}
-		else
-			menu.maxConexiones();
+	}
+	
+	private void enviar_msj() throws IOException {
+		String nombreSala = entrada.readUTF();
+		String mensaje = entrada.readUTF();
+		for (JChatCliente chat : chats) {
+			if(chat.getSala().equals(nombreSala))
+				chat.escribirMensajeEnTextArea(mensaje);
+		}
 	}
 	
 	private void abandonar_sala() throws IOException {
-		String sala = entrada.readUTF();
+		//String sala = entrada.readUTF();
 		salasConectadas--;
 //		for (JChatCliente chat : chats) {
 //			if(chat.getSala().equals(sala)) {
