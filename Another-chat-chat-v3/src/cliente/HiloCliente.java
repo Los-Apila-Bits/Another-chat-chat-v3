@@ -1,38 +1,56 @@
 package cliente;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.List;
 
-import javax.swing.DefaultListModel;
+import comandos.Comando;
 import ventanas.JLobby;
 
-public class HiloCliente extends Thread{
-	
+public class HiloCliente extends Thread {
+
 	private ObjectInputStream entrada;
 	private JLobby menu;
-	//private JChatCliente ventana;
-	
+	// private JChatCliente ventana;
+
 	public HiloCliente(ObjectInputStream entrada, JLobby menu) {
 		this.entrada = entrada;
 		this.menu = menu;
 	}
-	
-	@SuppressWarnings("unchecked")
-	public void run() {
-		List<String> salas;
-		DefaultListModel<String> model = new DefaultListModel<String>();
-		while(true) {
-			try {
-				salas = (List<String>) entrada.readObject();
-				model.clear();
-				for (String string : salas) {
-					model.addElement(string);
-				}
-				menu.getLista().setModel(model);
-			} catch (ClassNotFoundException | IOException e) {
-				e.printStackTrace();
-			}
 
+	public void run() {
+		int caso;
+		try {
+			while (true) {
+				caso = entrada.readInt();
+				switch (caso) {
+				case Comando.CONECTARSE: {
+					conectarse();
+					break;
+				}
+				case Comando.CREAR_SALA: {
+					crear_sala();
+					break;
+				}
+				default:
+					throw new IllegalArgumentException("Unexpected value: " + caso);
+				}
+			}
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
 		}
+
+	}
+	
+	private void conectarse() throws ClassNotFoundException, IOException {
+		@SuppressWarnings("unchecked")
+		List<String> salas = (List<String>) entrada.readObject();
+		menu.actualizar_salas(salas);
+	}
+	
+	private void crear_sala() throws ClassNotFoundException, IOException {
+		@SuppressWarnings("unchecked")
+		List<String> salas = (List<String>) entrada.readObject();
+		menu.actualizar_salas(salas);
 	}
 }

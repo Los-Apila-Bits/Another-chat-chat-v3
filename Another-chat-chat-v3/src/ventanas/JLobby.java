@@ -5,6 +5,8 @@ import java.awt.EventQueue;
 import javax.swing.*;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.util.Collections;
+import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -23,14 +25,10 @@ public class JLobby extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JList<String> list;
 	private JScrollPane listScroller;
-	private static DefaultListModel<String> model;
+	private DefaultListModel<String> model;
 	private JButton crearSalaButton;
 	private JButton unirseSalaButton;
 	private Cliente cliente;
-	
-	static {
-		model = new DefaultListModel<String>();	
-	}
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -52,6 +50,7 @@ public class JLobby extends JFrame {
 		setBounds(50, 50, 358, 308);
 		crearSalaButton = new JButton("Crear Sala");
 		iniButtonCrearSala();
+		model = new DefaultListModel<String>();	
 		list = new JList<String>();
 		listScroller = new JScrollPane(list);
 		listScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -103,6 +102,15 @@ public class JLobby extends JFrame {
 				//run();
 			}
 		});
+	}
+	
+	public void actualizar_salas(List<String> salas) {
+		model.clear();
+		Collections.sort(salas);
+		for (String sala : salas) {
+			model.addElement(sala);
+		}
+		list.setModel(model);
 	}
 
 	public JList<String> getLista() {
