@@ -3,6 +3,7 @@ package cliente;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import comandos.Comando;
@@ -101,10 +102,12 @@ public class HiloCliente extends Thread {
 	private void abandonar_sala() throws IOException {
 		String sala = entrada.readUTF();
 		salasConectadas--;
-		chats.remove(0);
-//		for (JChatCliente chat : chats) {
-//			if(chat.getSala().equals(sala)) {
-//			}
-//		}
+		for (Iterator<JChatCliente> iterator = chats.iterator(); iterator.hasNext();) {
+			JChatCliente chat = (JChatCliente) iterator.next();
+			if(chat.getSala().equals(sala)) {
+				iterator.remove();
+				return;
+			}
+		}
 	}
 }
