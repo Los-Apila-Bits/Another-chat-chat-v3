@@ -1,7 +1,13 @@
 package comandos;
 
-public class Conectarse implements Comando {
+import java.io.Serializable;
+
+public class Conectarse implements Comando, Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public Conectarse() {
 		
 	}
