@@ -6,7 +6,6 @@ import javax.swing.*;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.awt.event.ActionEvent;
 import javax.swing.JList;
@@ -124,6 +123,10 @@ public class JLobby extends JFrame {
 	
 	public Cliente getCliente() {
 		return this.cliente;
+	}
+	
+	public void maxConexiones() {
+		JOptionPane.showMessageDialog(unirseSalaButton, "Ya estas conectado a 3 salas");
 	}
 	
 	public JLobby getLobby() {

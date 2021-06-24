@@ -48,6 +48,7 @@ public class HiloCliente extends Thread {
 					actualizar_sala();
 					break;
 				}
+
 				default:
 					throw new IllegalArgumentException("Unexpected value: " + caso);
 				}
@@ -77,12 +78,14 @@ public class HiloCliente extends Thread {
 	}
 	
 	private void unirse_sala() throws IOException {
-		String sala = entrada.readUTF();
 		if(salasConectadas < 3) {
+			String sala = entrada.readUTF();
 			chats.add(new JChatCliente(menu.getCliente(), sala));
 			chats.get(salasConectadas).run();
 			salasConectadas++;
 		}
+		else
+			menu.maxConexiones();
 	}
 	
 	private void abandonar_sala() throws IOException {

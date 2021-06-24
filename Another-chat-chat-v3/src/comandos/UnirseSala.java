@@ -2,8 +2,6 @@ package comandos;
 
 import java.io.Serializable;
 
-import servidor.Paquete;
-
 public class UnirseSala implements Comando, Serializable {
 	
 	private static final long serialVersionUID = 1L;

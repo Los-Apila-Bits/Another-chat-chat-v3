@@ -1,7 +1,7 @@
 package servidor;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+//import java.io.ObjectInputStream;
+//import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
 
@@ -12,6 +12,7 @@ public class Paquete implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Socket cliente;
 	private String nombre;
+	private int salasActivas = 0;
 //	private ObjectInputStream entrada;
 //	private ObjectOutputStream salida;
 	
@@ -33,6 +34,18 @@ public class Paquete implements Serializable {
 	
 	public void setSocket(Socket cliente) {
 		this.cliente = cliente;
+	}
+	
+	public void conectarSala() {
+		salasActivas++;
+	}
+	
+	public void desconectarSala() {
+		salasActivas--;
+	}
+	
+	public int getSalasActivas() {
+		return this.salasActivas;
 	}
 
 //	public Socket getCliente() {

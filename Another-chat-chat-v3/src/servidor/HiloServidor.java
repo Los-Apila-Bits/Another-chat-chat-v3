@@ -109,16 +109,21 @@ public class HiloServidor extends Thread {
 	}
 	
 	public void comando_unise_sala(String nombreSala) throws IOException {
-		Servidor.getSalas().get(nombreSala).add(pcliente);
-		Servidor.getSalidas().get(cliente).writeInt(Comando.UNIRSE_SALA);
-		Servidor.getSalidas().get(cliente).flush();
-		Servidor.getSalidas().get(cliente).writeUTF(nombreSala);
-		Servidor.getSalidas().get(cliente).flush();
-		comando_actualizar_salas();
+		if(pcliente.getSalasActivas()<3) {
+			Servidor.getSalas().get(nombreSala).add(pcliente);
+			pcliente.conectarSala();
+			Servidor.getSalidas().get(cliente).writeInt(Comando.UNIRSE_SALA);
+			Servidor.getSalidas().get(cliente).flush();
+			Servidor.getSalidas().get(cliente).writeUTF(nombreSala);
+			Servidor.getSalidas().get(cliente).flush();
+			comando_actualizar_salas();
+		}else
+			Servidor.getSalidas().get(cliente).writeInt(Comando.UNIRSE_SALA);
 	}
 	
 	public void comando_abandonar_sala(String nombreSala) throws IOException {
 		Servidor.getSalas().get(nombreSala).remove(pcliente);
+		pcliente.desconectarSala();
 		comando_actualizar_salas();
 		Servidor.getSalidas().get(cliente).writeInt(Comando.ABANDONAR_SALA);
 		Servidor.getSalidas().get(cliente).flush();

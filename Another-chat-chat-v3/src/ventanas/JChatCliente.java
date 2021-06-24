@@ -41,7 +41,7 @@ public class JChatCliente extends JFrame {
 		this.nombreSala = nombreSala;
 		this.addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosed(WindowEvent e) {
+			public void windowClosing(WindowEvent e) {
 				cliente.ejecutarComando(new AbandonarSala(nombreSala));
 			}
 		});
