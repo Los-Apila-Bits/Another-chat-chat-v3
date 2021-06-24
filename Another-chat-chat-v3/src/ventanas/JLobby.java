@@ -76,7 +76,9 @@ public class JLobby extends JFrame {
 				cliente = new Cliente(1200,"localhost",nombre);
 				mnOpciones.setEnabled(false);
 				cliente.inicializarHiloCliente(getLobby());
-				cliente.ejecutarComando(new Conectarse(new Paquete(cliente)));	
+				cliente.ejecutarComando(new Conectarse(new Paquete(cliente)));
+				unirseSalaButton.setEnabled(true);
+				crearSalaButton.setEnabled(true);
 			}
 		});
 	}
@@ -90,6 +92,7 @@ public class JLobby extends JFrame {
 				cliente.ejecutarComando(new CrearSala(nombre));
 			}
 		});
+		crearSalaButton.setEnabled(false);
 	}
 
 	public void iniButtonUnirse() {
@@ -106,6 +109,7 @@ public class JLobby extends JFrame {
 				cliente.ejecutarComando(new UnirseSala(nombresala));
 			}
 		});
+		unirseSalaButton.setEnabled(false);
 	}
 	
 	public void actualizar_salas(List<String> salas) {

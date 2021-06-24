@@ -101,9 +101,9 @@ public class HiloCliente extends Thread {
 	private void abandonar_sala() throws IOException {
 		String sala = entrada.readUTF();
 		salasConectadas--;
+		chats.remove(0);
 //		for (JChatCliente chat : chats) {
 //			if(chat.getSala().equals(sala)) {
-//				chats.remove(chat);
 //			}
 //		}
 	}
