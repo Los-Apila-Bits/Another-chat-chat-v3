@@ -1,6 +1,7 @@
 package servidor;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -13,12 +14,12 @@ public class Servidor {
 	
 	private ServerSocket server;
 	private static Map<String, LinkedList<Paquete>> salas = new HashMap<>();
-	private List<Socket> clientes;
+	private static Map<Socket,ObjectOutputStream> clientes;
 	
 	public Servidor(int puerto) {
 		try {
 			server = new ServerSocket(puerto);
-			clientes = new ArrayList<Socket>();	
+			clientes = new HashMap<Socket,ObjectOutputStream>();	
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -29,8 +30,10 @@ public class Servidor {
 		try {
 			while(true) {
 				socket = server.accept();
-				clientes.add(socket);
-				new HiloServidor(socket,clientes).start();
+				ObjectOutputStream aux = new ObjectOutputStream(socket.getOutputStream());
+				aux.flush();
+				clientes.put(socket,aux);
+				new HiloServidor(socket).start();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -40,6 +43,10 @@ public class Servidor {
 	
 	public static Map<String, LinkedList<Paquete>> getSalas(){
 		return Servidor.salas;
+	}
+	
+	public static Map<Socket, ObjectOutputStream> getSalidas(){
+		return Servidor.clientes;
 	}
 	
 	public static void main(String[] args) {

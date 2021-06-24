@@ -9,7 +9,7 @@ import java.net.Socket;
 import comandos.Comando;
 import ventanas.JLobby;
 
-public class Cliente {
+public class Cliente  {
 	
 	private Socket socket;
 	private int puerto;
@@ -23,8 +23,9 @@ public class Cliente {
 
 		try {
 			socket = new Socket(this.ip, this.puerto);
-			salida = new ObjectOutputStream(socket.getOutputStream());
-			entrada = new ObjectInputStream(socket.getInputStream());
+			 salida = new ObjectOutputStream(socket.getOutputStream());
+			 entrada = new ObjectInputStream(socket.getInputStream());
+			 System.out.println("Cliente creado");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -32,12 +33,13 @@ public class Cliente {
 
 	public void ejecutarComando(Comando comando) {
 		try {
-			salida.writeObject(comando);
 			salida.flush();
+			salida.writeObject(comando);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
+	
 
 	public void inicializarHiloCliente(JLobby menu) {
 			new HiloCliente(entrada, menu).start();

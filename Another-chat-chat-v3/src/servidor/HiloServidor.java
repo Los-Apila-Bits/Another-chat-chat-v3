@@ -11,34 +11,32 @@ import comandos.Comando;
 public class HiloServidor extends Thread {
 
 	private Socket cliente;
-	private List<Socket> clientes;
 	Comando comando;
 
-	public HiloServidor(Socket cliente, List<Socket> clientes) {
+	public HiloServidor(Socket cliente) {
 		this.cliente = cliente;
-		this.clientes = clientes;
 	}
 
 	public void run() {
 		ObjectInputStream entrada;
 		ObjectOutputStream salida;
+		int aux=0;
 		try {
 			entrada = new ObjectInputStream(this.cliente.getInputStream());
 			while (true) {
 				try {
 					this.comando = (Comando) entrada.readObject();
-					if (comando.procesar_comando()==1) {
-						for (Socket socket : clientes) {
-							salida = new ObjectOutputStream(socket.getOutputStream());
-							salida.writeObject(Servidor.getSalas());
-							salida.flush();
-							salida.close();
+					aux = this.comando.procesar_comando();
+					if (aux==1) {
+						for (Socket socket : Servidor.getSalidas().keySet()) {
+							Servidor.getSalidas().get(socket).writeObject(Servidor.getSalas());
+							Servidor.getSalidas().get(socket).flush();
 						}			
 					}
-					if (comando.procesar_comando()==2) {
-						for (Socket socket : clientes) {
-							salida = new ObjectOutputStream(socket.getOutputStream());
-							salida.writeObject(Servidor.getSalas());
+					if (aux==2) {
+						for (Socket socket : Servidor.getSalidas().keySet()) {
+							Servidor.getSalidas().get(socket).writeObject(Servidor.getSalas());
+							Servidor.getSalidas().get(socket).flush();
 						}			
 					}
 				} catch (ClassNotFoundException | IOException e) {
