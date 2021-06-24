@@ -10,6 +10,7 @@ import java.util.Set;
 
 import comandos.AbandonarSala;
 import comandos.Comando;
+import comandos.Conectarse;
 import comandos.CrearSala;
 import comandos.UnirseSala;
 
@@ -35,7 +36,8 @@ public class HiloServidor extends Thread {
 
 				switch (caso) {
 				case Comando.CONECTARSE: {
-					comando_conectarse();
+					Conectarse cmd = (Conectarse) comando;
+					comando_conectarse(cmd.pcliente);
 					break;
 				}
 				case Comando.CREAR_SALA: {
@@ -45,7 +47,7 @@ public class HiloServidor extends Thread {
 				}
 				case Comando.UNIRSE_SALA: {
 					UnirseSala cmd = (UnirseSala) comando;
-					comando_unise_sala(cmd.nombreSala, cmd.pcliente);
+					comando_unise_sala(cmd.nombreSala);
 					break;
 				}
 				case Comando.ABANDONAR_SALA: {
@@ -62,8 +64,8 @@ public class HiloServidor extends Thread {
 			e.printStackTrace();
 		}
 	}
-
-	public void comando_conectarse() throws IOException {
+	
+	public void comando_actualizar_salas() throws IOException {
 		Servidor.getSalidas().get(cliente).flush();
 		Set<String> keySalas = Servidor.getSalas().keySet();
 		List<String> salas = new ArrayList<String>();
@@ -71,10 +73,25 @@ public class HiloServidor extends Thread {
 			salas.add(keySala+" ("+Servidor.getSalas().get(keySala).size()+")");
 		}
 		for (Socket socket : Servidor.getSalidas().keySet()) {
-			Servidor.getSalidas().get(socket).writeInt(Comando.CONECTARSE);
+			Servidor.getSalidas().get(socket).writeInt(Comando.ACTUALIZAR_SALAS);
 			Servidor.getSalidas().get(socket).writeObject(salas);
 			Servidor.getSalidas().get(socket).flush();
 		}
+	}
+
+	public void comando_conectarse(Paquete pcliente) throws IOException {
+		this.pcliente = pcliente;
+		this.pcliente.setSocket(cliente);
+		Servidor.getSalidas().get(cliente).flush();
+		Set<String> keySalas = Servidor.getSalas().keySet();
+		List<String> salas = new ArrayList<String>();
+		for (String keySala : keySalas) {
+			salas.add(keySala+" ("+Servidor.getSalas().get(keySala).size()+")");
+		}
+		Servidor.getSalidas().get(cliente).writeInt(Comando.CONECTARSE);
+		Servidor.getSalidas().get(cliente).writeObject(salas);
+		Servidor.getSalidas().get(cliente).flush();
+		
 	}
 
 	public void comando_crear_sala(String nombreSala) throws IOException {
@@ -91,20 +108,18 @@ public class HiloServidor extends Thread {
 		}
 	}
 	
-	public void comando_unise_sala(String nombreSala, Paquete pcliente) throws IOException {
-		pcliente.setSocket(cliente);
-		this.pcliente = pcliente;
+	public void comando_unise_sala(String nombreSala) throws IOException {
 		Servidor.getSalas().get(nombreSala).add(pcliente);
 		Servidor.getSalidas().get(cliente).writeInt(Comando.UNIRSE_SALA);
 		Servidor.getSalidas().get(cliente).flush();
 		Servidor.getSalidas().get(cliente).writeUTF(nombreSala);
 		Servidor.getSalidas().get(cliente).flush();
-		comando_conectarse();
+		comando_actualizar_salas();
 	}
 	
 	public void comando_abandonar_sala(String nombreSala) throws IOException {
 		Servidor.getSalas().get(nombreSala).remove(pcliente);
-		comando_conectarse();
+		comando_actualizar_salas();
 		Servidor.getSalidas().get(cliente).writeInt(Comando.ABANDONAR_SALA);
 		Servidor.getSalidas().get(cliente).flush();
 		Servidor.getSalidas().get(cliente).writeUTF(nombreSala);

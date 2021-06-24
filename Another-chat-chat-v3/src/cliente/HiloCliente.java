@@ -19,7 +19,7 @@ public class HiloCliente extends Thread {
 	public HiloCliente(ObjectInputStream entrada, JLobby menu) {
 		this.entrada = entrada;
 		this.menu = menu;
-		chats = new ArrayList<JChatCliente>();
+		this.chats = new ArrayList<JChatCliente>();
 	}
 
 	public void run() {
@@ -44,6 +44,10 @@ public class HiloCliente extends Thread {
 					abandonar_sala();
 					break;
 				}
+				case Comando.ACTUALIZAR_SALAS:{
+					actualizar_sala();
+					break;
+				}
 				default:
 					throw new IllegalArgumentException("Unexpected value: " + caso);
 				}
@@ -52,6 +56,12 @@ public class HiloCliente extends Thread {
 			e.printStackTrace();
 		}
 
+	}
+	
+	private void actualizar_sala() throws ClassNotFoundException, IOException {
+		@SuppressWarnings("unchecked")
+		List<String> salas = (List<String>) entrada.readObject();
+		menu.actualizar_salas(salas);
 	}
 	
 	private void conectarse() throws ClassNotFoundException, IOException {
@@ -77,11 +87,11 @@ public class HiloCliente extends Thread {
 	
 	private void abandonar_sala() throws IOException {
 		String sala = entrada.readUTF();
-		for (JChatCliente chat : chats) {
-			if(chat.getSala().equals(sala)) {
-				chats.remove(chat);
-				salasConectadas--;
-			}
-		}
+		salasConectadas--;
+//		for (JChatCliente chat : chats) {
+//			if(chat.getSala().equals(sala)) {
+//				chats.remove(chat);
+//			}
+//		}
 	}
 }

@@ -41,7 +41,7 @@ public class JChatCliente extends JFrame {
 		this.nombreSala = nombreSala;
 		this.addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosing(WindowEvent e) {
+			public void windowClosed(WindowEvent e) {
 				cliente.ejecutarComando(new AbandonarSala(nombreSala));
 			}
 		});
@@ -82,7 +82,6 @@ public class JChatCliente extends JFrame {
 		textArea = new JTextArea();
 		scrollPane.setViewportView(textArea);
 		textArea.setEditable(false);
-		//run();
 	}
 
 	public JChatCliente iniciar() {

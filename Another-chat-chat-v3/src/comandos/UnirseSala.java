@@ -8,11 +8,9 @@ public class UnirseSala implements Comando, Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	public final String nombreSala;
-	public final Paquete pcliente;
 	
-	public UnirseSala(String nombreSala, Paquete pcliente) {
+	public UnirseSala(String nombreSala) {
 		this.nombreSala = nombreSala;
-		this.pcliente = pcliente;
 	}
 	
 	public int procesar_comando() {

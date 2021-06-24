@@ -77,8 +77,7 @@ public class JLobby extends JFrame {
 				cliente = new Cliente(1200,"localhost",nombre);
 				mnOpciones.setEnabled(false);
 				cliente.inicializarHiloCliente(getLobby());
-				cliente.ejecutarComando(new Conectarse());
-				
+				cliente.ejecutarComando(new Conectarse(new Paquete(cliente)));	
 			}
 		});
 	}
@@ -105,7 +104,7 @@ public class JLobby extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String nombresala = list.getSelectedValue();
 				nombresala = nombresala.substring(0, nombresala.indexOf(" ("));
-				cliente.ejecutarComando(new UnirseSala(nombresala, new Paquete(cliente)));
+				cliente.ejecutarComando(new UnirseSala(nombresala));
 			}
 		});
 	}
