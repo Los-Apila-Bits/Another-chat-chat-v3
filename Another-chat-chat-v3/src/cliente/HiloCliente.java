@@ -14,6 +14,7 @@ public class HiloCliente extends Thread {
 	private ObjectInputStream entrada;
 	private JLobby menu;
 	private List<JChatCliente> chats;
+	private int salasConectadas = 0;
 
 	public HiloCliente(ObjectInputStream entrada, JLobby menu) {
 		this.entrada = entrada;
@@ -37,6 +38,10 @@ public class HiloCliente extends Thread {
 				}
 				case Comando.UNIRSE_SALA: {
 					unirse_sala();
+					break;
+				}
+				case Comando.ABANDONAR_SALA: {
+					abandonar_sala();
 					break;
 				}
 				default:
@@ -63,7 +68,20 @@ public class HiloCliente extends Thread {
 	
 	private void unirse_sala() throws IOException {
 		String sala = entrada.readUTF();
-		chats.add(new JChatCliente(menu.getCliente(), sala));
-		chats.get(0).run();
+		if(salasConectadas < 3) {
+			chats.add(new JChatCliente(menu.getCliente(), sala));
+			chats.get(salasConectadas).run();
+			salasConectadas++;
+		}
+	}
+	
+	private void abandonar_sala() throws IOException {
+		String sala = entrada.readUTF();
+		for (JChatCliente chat : chats) {
+			if(chat.getSala().equals(sala)) {
+				chats.remove(chat);
+				salasConectadas--;
+			}
+		}
 	}
 }

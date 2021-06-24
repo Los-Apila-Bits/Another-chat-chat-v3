@@ -105,5 +105,9 @@ public class HiloServidor extends Thread {
 	public void comando_abandonar_sala(String nombreSala) throws IOException {
 		Servidor.getSalas().get(nombreSala).remove(pcliente);
 		comando_conectarse();
+		Servidor.getSalidas().get(cliente).writeInt(Comando.ABANDONAR_SALA);
+		Servidor.getSalidas().get(cliente).flush();
+		Servidor.getSalidas().get(cliente).writeUTF(nombreSala);
+		Servidor.getSalidas().get(cliente).flush();
 	}
 }
