@@ -32,6 +32,7 @@ public class JLobby extends JFrame {
 	private JButton crearSalaButton;
 	private JButton unirseSalaButton;
 	private Cliente cliente;
+	private int salasActivas = 0;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -114,6 +115,10 @@ public class JLobby extends JFrame {
 		unirseSalaButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String nombresala = list.getSelectedValue();
+				if(salasActivas==3) {
+					JOptionPane.showMessageDialog(null, "No puedes estar conectado\nen mas de 3 salas");
+					return;
+				}
 				if(nombresala!=null) {
 					nombresala = nombresala.substring(0, nombresala.indexOf(" ("));
 					cliente.ejecutarComando(new UnirseSala(nombresala));
@@ -146,5 +151,13 @@ public class JLobby extends JFrame {
 	
 	public JLobby getLobby() {
 		return this;
+	}
+	
+	public void setSalasActivas(int n) {
+		this.salasActivas=n;
+	}
+	
+	public int getSalasActivas() {
+		return this.salasActivas;
 	}
 }

@@ -121,8 +121,8 @@ public class HiloServidor extends Thread {
 				return;
 		}
 		if (pcliente.getSalasActivas() < 3) {
-			Servidor.getSalas().get(nombreSala).add(pcliente);
 			pcliente.conectarSala(nombreSala);
+			Servidor.getSalas().get(nombreSala).add(pcliente);
 			Servidor.getSalidas().get(cliente).flush();
 			Servidor.getSalidas().get(cliente).writeInt(Comando.UNIRSE_SALA);
 			Servidor.getSalidas().get(cliente).flush();
