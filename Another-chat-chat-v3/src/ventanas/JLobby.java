@@ -5,6 +5,8 @@ import java.awt.EventQueue;
 import javax.swing.*;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Collections;
 import java.util.List;
 import java.awt.event.ActionEvent;
@@ -46,6 +48,12 @@ public class JLobby extends JFrame {
 	}
 
 	public JLobby() {
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				//cliente.ejecutarComando(new Desconectar());
+			}
+		});
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(null);
 		setBounds(50, 50, 358, 308);

@@ -8,5 +8,6 @@ public interface Comando {
 	public static final int ABANDONAR_SALA = 4;
 	public static final int ACTUALIZAR_SALAS = 5;
 	public static final int MAX_SALAS_CONECTADAS = 6;
+	public static final int DESCONECTAR = 7;
 	public int procesar_comando();
 }

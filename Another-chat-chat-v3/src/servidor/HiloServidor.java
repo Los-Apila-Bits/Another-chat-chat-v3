@@ -12,6 +12,7 @@ import comandos.AbandonarSala;
 import comandos.Comando;
 import comandos.Conectarse;
 import comandos.CrearSala;
+import comandos.Desconectar;
 import comandos.EnviarMsj;
 import comandos.UnirseSala;
 
@@ -20,13 +21,13 @@ public class HiloServidor extends Thread {
 	private Socket cliente;
 	private Comando comando;
 	private Paquete pcliente;
-
+	ObjectInputStream entrada;
 	public HiloServidor(Socket cliente) {
 		this.cliente = cliente;
 	}
 
 	public void run() {
-		ObjectInputStream entrada;
+		
 		int caso;
 
 		try {
@@ -60,6 +61,11 @@ public class HiloServidor extends Thread {
 				case Comando.ABANDONAR_SALA: {
 					AbandonarSala cmd = (AbandonarSala) comando;
 					comando_abandonar_sala(cmd.sala);
+					break;
+				}
+				case Comando.DESCONECTAR: {
+					Desconectar cmd = (Desconectar) comando;
+					comando_desconectar();
 					break;
 				}
 				default:
@@ -159,5 +165,11 @@ public class HiloServidor extends Thread {
 			receptor.getSalida().writeUTF(msj);
 			receptor.getSalida().flush();
 		}
+	}
+	public void comando_desconectar() throws IOException {
+		Servidor.getSalidas().remove(cliente);
+		pcliente.getSalida().writeInt(Comando.DESCONECTAR);
+		entrada.close();
+		
 	}
 }

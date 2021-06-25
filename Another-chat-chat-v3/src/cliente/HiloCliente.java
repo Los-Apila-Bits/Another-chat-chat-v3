@@ -5,7 +5,6 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import comandos.Comando;
 import ventanas.JChatCliente;
 import ventanas.JLobby;
@@ -51,6 +50,10 @@ public class HiloCliente extends Thread {
 				}
 				case Comando.ENVIAR_MSJ: {
 					enviar_msj();
+					break;
+				}
+				case Comando.DESCONECTAR: {
+					desconectar();
 					break;
 				}
 				default:
@@ -109,5 +112,9 @@ public class HiloCliente extends Thread {
 				return;
 			}
 		}
+	}
+	private void desconectar() throws IOException, ClassNotFoundException {
+		menu.getCliente().getSalida().close();
+		menu.getCliente().getSocket().close();
 	}
 }
