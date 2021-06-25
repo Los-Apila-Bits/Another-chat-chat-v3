@@ -4,10 +4,12 @@ package servidor;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import cliente.Cliente;
+import ventanas.JChatCliente;
 
 public class Paquete implements Serializable {
 
@@ -36,11 +38,18 @@ public class Paquete implements Serializable {
 		this.cliente = cliente;
 	}
 	
-	public void conectarSala() {
+	public void conectarSala(String nombreSala) {
+		salas.add(nombreSala);
 		salasActivas++;
 	}
 	
-	public void desconectarSala() {
+	public void desconectarSala(String nombreSala) {
+		for (Iterator<String> iterator = salas.iterator(); iterator.hasNext();) {
+			String sala = (String) iterator.next();
+			if(sala.equals(nombreSala)) {
+				iterator.remove();
+			}
+		}
 		salasActivas--;
 	}
 	
@@ -51,6 +60,7 @@ public class Paquete implements Serializable {
 	public List<String> getSalas(){
 		return this.salas;
 	}
+	
 	
 	public void setSalida(ObjectOutputStream salida) {
 		this.salida = salida;
