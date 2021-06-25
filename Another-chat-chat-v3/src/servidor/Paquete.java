@@ -4,6 +4,8 @@ package servidor;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
+import java.util.LinkedList;
+import java.util.List;
 
 import cliente.Cliente;
 
@@ -13,11 +15,12 @@ public class Paquete implements Serializable {
 	private Socket cliente;
 	private String nombre;
 	private int salasActivas = 0;
-//	private ObjectInputStream entrada;
+	private List<String> salas;
 	private ObjectOutputStream salida;
 	
 	public Paquete(Cliente cliente) {
 		this.nombre = cliente.getNombre();
+		salas = new LinkedList<String>();
 	}
 	
 
@@ -43,6 +46,10 @@ public class Paquete implements Serializable {
 	
 	public int getSalasActivas() {
 		return this.salasActivas;
+	}
+	
+	public List<String> getSalas(){
+		return this.salas;
 	}
 	
 	public void setSalida(ObjectOutputStream salida) {
