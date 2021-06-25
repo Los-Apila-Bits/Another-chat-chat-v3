@@ -15,7 +15,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.awt.event.ActionEvent;
@@ -35,6 +37,7 @@ public class JChatCliente extends JFrame {
 	private JButton btnEnviar;
 	private JTextArea textArea;
 	private JScrollPane scrollPane;
+	private String historialChat;
 
 	public JChatCliente(Cliente cliente, String nombreSala) {
 		this.cliente = cliente;
@@ -82,6 +85,21 @@ public class JChatCliente extends JFrame {
 		textArea = new JTextArea();
 		scrollPane.setViewportView(textArea);
 		textArea.setEditable(false);
+		
+		JButton btnDecargar = new JButton("New button");
+		btnDecargar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					PrintWriter salida = new PrintWriter(new File("Descargas/"+nombreSala+"-"+cliente.getNombre()+".txt"));
+					salida.println(historialChat);
+					salida.close();
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnDecargar.setBounds(360, 11, 64, 23);
+		contentPane.add(btnDecargar);
 	}
 
 	public JChatCliente iniciar() {
@@ -89,6 +107,7 @@ public class JChatCliente extends JFrame {
 	}
 
 	public void escribirMensajeEnTextArea(String mensaje) {
+		historialChat+=mensaje+"\n";
 		textArea.append(mensaje);
 		try {
 			sonidoMsj();

@@ -1,15 +1,12 @@
 package servidor;
 
-//import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 import cliente.Cliente;
-import ventanas.JChatCliente;
 
 public class Paquete implements Serializable {
 
