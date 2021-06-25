@@ -89,7 +89,8 @@ public class JLobby extends JFrame {
 		crearSalaButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String nombre = JOptionPane.showInputDialog("Ingrese el nombre de la sala");
-				cliente.ejecutarComando(new CrearSala(nombre));
+				if(nombre!=null && nombre!="")
+					cliente.ejecutarComando(new CrearSala(nombre));
 			}
 		});
 		crearSalaButton.setEnabled(false);
@@ -105,8 +106,10 @@ public class JLobby extends JFrame {
 		unirseSalaButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String nombresala = list.getSelectedValue();
-				nombresala = nombresala.substring(0, nombresala.indexOf(" ("));
-				cliente.ejecutarComando(new UnirseSala(nombresala));
+				if(nombresala!=null) {
+					nombresala = nombresala.substring(0, nombresala.indexOf(" ("));
+					cliente.ejecutarComando(new UnirseSala(nombresala));
+				}
 			}
 		});
 		unirseSalaButton.setEnabled(false);

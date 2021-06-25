@@ -8,6 +8,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
@@ -86,7 +87,7 @@ public class JChatCliente extends JFrame {
 		scrollPane.setViewportView(textArea);
 		textArea.setEditable(false);
 		
-		JButton btnDecargar = new JButton("New button");
+		JButton btnDecargar = new JButton(new ImageIcon("icon.png"));
 		btnDecargar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -98,8 +99,9 @@ public class JChatCliente extends JFrame {
 				}
 			}
 		});
-		btnDecargar.setBounds(360, 11, 64, 23);
+		btnDecargar.setBounds(10, 3, 36, 30);
 		contentPane.add(btnDecargar);
+		
 	}
 
 	public JChatCliente iniciar() {
