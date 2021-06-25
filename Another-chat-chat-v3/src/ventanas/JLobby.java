@@ -51,7 +51,7 @@ public class JLobby extends JFrame {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
-				//cliente.ejecutarComando(new Desconectar());
+				cliente.ejecutarComando(new Desconectar());
 			}
 		});
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

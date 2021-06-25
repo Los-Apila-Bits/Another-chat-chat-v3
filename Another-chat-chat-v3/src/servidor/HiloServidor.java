@@ -3,21 +3,12 @@ package servidor;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import comandos.AbandonarSala;
-import comandos.Comando;
-import comandos.Conectarse;
-import comandos.CrearSala;
-import comandos.Desconectar;
-import comandos.EnviarMsj;
-import comandos.UnirseSala;
+import java.util.*;
+import comandos.*;
 
 public class HiloServidor extends Thread {
 
+	private boolean ejecutar = true;
 	private Socket cliente;
 	private Comando comando;
 	private Paquete pcliente;
@@ -29,10 +20,9 @@ public class HiloServidor extends Thread {
 	public void run() {
 		
 		int caso;
-
 		try {
 			entrada = new ObjectInputStream(this.cliente.getInputStream());
-			while (true) {
+			while (ejecutar) {
 
 				comando = (Comando) entrada.readObject();
 				caso = comando.procesar_comando();
@@ -64,7 +54,6 @@ public class HiloServidor extends Thread {
 					break;
 				}
 				case Comando.DESCONECTAR: {
-					Desconectar cmd = (Desconectar) comando;
 					comando_desconectar();
 					break;
 				}
@@ -167,9 +156,11 @@ public class HiloServidor extends Thread {
 		}
 	}
 	public void comando_desconectar() throws IOException {
+		this.ejecutar = false;
+		cliente.close();
 		Servidor.getSalidas().remove(cliente);
 		pcliente.getSalida().writeInt(Comando.DESCONECTAR);
-		entrada.close();
+		//entrada.close();
 		
 	}
 }

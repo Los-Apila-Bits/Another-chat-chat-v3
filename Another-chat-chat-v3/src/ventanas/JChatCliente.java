@@ -91,7 +91,9 @@ public class JChatCliente extends JFrame {
 		btnDecargar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					PrintWriter salida = new PrintWriter(new File("Descargas/"+nombreSala+"-"+cliente.getNombre()+".txt"));
+					DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss--");
+					PrintWriter salida = new PrintWriter(new File("Descargas/"+dtf.format(LocalDateTime.now())
+					+nombreSala+"-"+cliente.getNombre()+".txt"));
 					salida.println(historialChat);
 					salida.close();
 				} catch (FileNotFoundException e1) {
@@ -109,7 +111,7 @@ public class JChatCliente extends JFrame {
 	}
 
 	public void escribirMensajeEnTextArea(String mensaje) {
-		historialChat+=mensaje+"\n";
+		historialChat+=mensaje;
 		textArea.append(mensaje);
 		try {
 			sonidoMsj();

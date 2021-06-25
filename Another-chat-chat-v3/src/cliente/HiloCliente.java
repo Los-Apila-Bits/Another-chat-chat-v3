@@ -11,6 +11,7 @@ import ventanas.JLobby;
 
 public class HiloCliente extends Thread {
 
+	private boolean ejecutar = true;
 	private ObjectInputStream entrada;
 	private JLobby menu;
 	private List<JChatCliente> chats;
@@ -25,7 +26,7 @@ public class HiloCliente extends Thread {
 	public void run() {
 		int caso;
 		try {
-			while (true) {
+			while (ejecutar) {
 				caso = entrada.readInt();
 				switch (caso) {
 				case Comando.CONECTARSE: {
@@ -114,7 +115,8 @@ public class HiloCliente extends Thread {
 		}
 	}
 	private void desconectar() throws IOException, ClassNotFoundException {
+		this.ejecutar = false;
 		menu.getCliente().getSalida().close();
-		menu.getCliente().getSocket().close();
+		menu.getCliente().getSocket().close();	
 	}
 }
