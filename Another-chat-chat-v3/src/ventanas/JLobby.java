@@ -51,26 +51,15 @@ public class JLobby extends JFrame {
 	public JLobby() {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosed(WindowEvent e) {
+			public void windowClosing(WindowEvent e) {
 				cliente.ejecutarComando(new Desconectar());
 			}
 		});
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(null);
 		setBounds(50, 50, 358, 308);
-		crearSalaButton = new JButton("Crear Sala");
 		iniButtonCrearSala();
-		model = new DefaultListModel<String>();	
-		list = new JList<String>();
-		listScroller = new JScrollPane(list);
-		listScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		listScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		listScroller.setBounds(10, 50, 319, 175);
-		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		list.setBounds(29, 46, 300, 300);
-		getContentPane().add(listScroller);
-		list.setModel(model);
-		unirseSalaButton = new JButton("Unirse");
+		iniLista();
 		iniButtonUnirse();
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setBounds(0, 0, 342, 22);
@@ -91,8 +80,22 @@ public class JLobby extends JFrame {
 			}
 		});
 	}
+	
+	public void iniLista() {
+		model = new DefaultListModel<String>();	
+		list = new JList<String>();
+		listScroller = new JScrollPane(list);
+		listScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		listScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		listScroller.setBounds(10, 50, 319, 175);
+		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		list.setBounds(29, 46, 300, 300);
+		getContentPane().add(listScroller);
+		list.setModel(model);
+	}
 
 	public void iniButtonCrearSala() {
+		crearSalaButton = new JButton("Crear Sala");
 		crearSalaButton.setBounds(229, 230, 100, 23);
 		getContentPane().add(crearSalaButton);
 		crearSalaButton.addActionListener(new ActionListener() {
@@ -106,12 +109,14 @@ public class JLobby extends JFrame {
 	}
 
 	public void iniButtonUnirse() {
+		unirseSalaButton = new JButton("Unirse");
 		unirseSalaButton.setBounds(130, 230, 89, 23);
 		getContentPane().add(unirseSalaButton);
 		JLabel lblSalas = new JLabel("Salas");
 		lblSalas.setFont(new Font("Arial", Font.PLAIN, 12));
 		lblSalas.setBounds(10, 33, 46, 17);
 		getContentPane().add(lblSalas);
+		unirseSalaButton.setEnabled(false);
 		unirseSalaButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String nombresala = list.getSelectedValue();
@@ -125,7 +130,6 @@ public class JLobby extends JFrame {
 				}
 			}
 		});
-		unirseSalaButton.setEnabled(false);
 	}
 	
 	public void actualizar_salas(List<String> salas) {

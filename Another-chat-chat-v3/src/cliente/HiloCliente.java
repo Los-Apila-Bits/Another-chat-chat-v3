@@ -113,6 +113,15 @@ public class HiloCliente extends Thread {
 		}
 	}
 
+	private void enviar_msj_priv() throws IOException {
+		String nombreSala = entrada.readUTF();
+		String mensaje = entrada.readUTF();
+		for (JChatCliente chat : chats) {
+			if (chat.getSala().equals(nombreSala))
+				chat.escribirMsjPrivaEnTextArea(mensaje);
+		}
+	}
+
 	private void abandonar_sala() throws IOException {
 		String sala = entrada.readUTF();
 		salasConectadas--;
@@ -130,6 +139,7 @@ public class HiloCliente extends Thread {
 		this.ejecutar = false;
 		menu.getCliente().getSalida().close();
 		menu.getCliente().getSocket().close();
+		menu.getCliente().getSocket().close();
 	}
 
 	private void actualizar_ons() throws IOException, ClassNotFoundException {
@@ -144,12 +154,4 @@ public class HiloCliente extends Thread {
 		}
 	}
 
-	private void enviar_msj_priv() throws IOException {
-		String nombreSala = entrada.readUTF();
-		String mensaje = entrada.readUTF();
-		for (JChatCliente chat : chats) {
-			if (chat.getSala().equals(nombreSala))
-				chat.escribirMsjPrivaEnTextArea(mensaje);
-		}
-	}
 }

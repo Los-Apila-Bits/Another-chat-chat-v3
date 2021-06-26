@@ -63,20 +63,20 @@ public class HiloServidor extends Thread {
 					break;
 				}
 				case Comando.DESCONECTAR: {
+					ejecutar = false;
 					comando_desconectar();
 					break;
 				}
 				default:
 					break;
 				}
-
 			}
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void comando_actualizar_salas() throws IOException {
+	private void comando_actualizar_salas() throws IOException {
 		Servidor.getSalidas().get(cliente).flush();
 		Set<String> keySalas = Servidor.getSalas().keySet();
 		List<String> salas = new ArrayList<String>();
@@ -90,7 +90,7 @@ public class HiloServidor extends Thread {
 		}
 	}
 
-	public void comando_conectarse(Paquete pcliente) throws IOException {
+	private void comando_conectarse(Paquete pcliente) throws IOException {
 		this.pcliente = pcliente;
 		this.pcliente.setSocket(cliente);
 		this.pcliente.setSalida(Servidor.getSalidas().get(cliente));
@@ -107,7 +107,7 @@ public class HiloServidor extends Thread {
 
 	}
 
-	public void comando_crear_sala(String nombreSala) throws IOException {
+	private void comando_crear_sala(String nombreSala) throws IOException {
 		if (!Servidor.getSalas().containsKey(nombreSala)) {
 			Servidor.getSalas().put(nombreSala, new LinkedList<Paquete>());
 			Set<String> keySalas = Servidor.getSalas().keySet();
@@ -124,7 +124,7 @@ public class HiloServidor extends Thread {
 		}
 	}
 
-	public void comando_unirse_sala(String nombreSala) throws IOException {
+	private void comando_unirse_sala(String nombreSala) throws IOException {
 		for (String sala : pcliente.getSalas()) {
 			if(nombreSala.equals(sala))
 				return;
@@ -142,7 +142,7 @@ public class HiloServidor extends Thread {
 		}
 	}
 
-	public void comando_abandonar_sala(String nombreSala) throws IOException {
+	private void comando_abandonar_sala(String nombreSala) throws IOException {
 		Servidor.getSalas().get(nombreSala).remove(pcliente);
 		pcliente.desconectarSala(nombreSala);
 		comando_actualizar_salas();
@@ -154,7 +154,7 @@ public class HiloServidor extends Thread {
 		actualizar_on(nombreSala);
 	}
 
-	public void comando_enviar_msj(String nombreSala, String msj) throws IOException {
+	private void comando_enviar_msj(String nombreSala, String msj) throws IOException {
 		List<Paquete> receptores = Servidor.getSalas().get(nombreSala);
 		for (Paquete receptor : receptores) {
 			receptor.getSalida().flush();
@@ -167,16 +167,23 @@ public class HiloServidor extends Thread {
 		}
 	}
 	
-	public void comando_desconectar() throws IOException {
-		this.ejecutar = false;
-		cliente.close();
-		Servidor.getSalidas().remove(cliente);
-		pcliente.getSalida().writeInt(Comando.DESCONECTAR);
-		//entrada.close();
-		
+	private void comando_enviar_msj_priv(String mensaje, String nombreSala, String nombre) throws IOException {
+		List<Paquete> receptores = Servidor.getSalas().get(nombreSala);
+		for (Paquete receptor : receptores) {
+			if(receptor.getNombre().equals(nombre)) {
+				receptor.getSalida().writeInt(Comando.ENVIAR_MSJ_PRIV);
+				receptor.getSalida().flush();
+				receptor.getSalida().writeUTF(nombreSala);
+				receptor.getSalida().flush();
+				receptor.getSalida().writeUTF(mensaje);
+				receptor.getSalida().flush();
+				return;
+			}
+		}
 	}
 	
-	public void actualizar_on(String nombreSala) throws IOException{
+	
+	private void actualizar_on(String nombreSala) throws IOException{
 		List<Paquete> receptores = Servidor.getSalas().get(nombreSala);
 		DefaultListModel<String> model = new DefaultListModel<>();
 		long hora;
@@ -197,18 +204,9 @@ public class HiloServidor extends Thread {
 		}
 	}
 	
-	public void comando_enviar_msj_priv(String mensaje, String nombreSala, String nombre) throws IOException {
-		List<Paquete> receptores = Servidor.getSalas().get(nombreSala);
-		for (Paquete receptor : receptores) {
-			if(receptor.getNombre().equals(nombre)) {
-				receptor.getSalida().writeInt(Comando.ENVIAR_MSJ_PRIV);
-				receptor.getSalida().flush();
-				receptor.getSalida().writeUTF(nombreSala);
-				receptor.getSalida().flush();
-				receptor.getSalida().writeUTF(mensaje);
-				receptor.getSalida().flush();
-				return;
-			}
-		}
+	private void comando_desconectar() throws IOException {
+		Servidor.getSalidas().remove(cliente);
+		pcliente.getSalida().writeInt(Comando.DESCONECTAR);
+		pcliente.getSalida().flush();
 	}
 }
