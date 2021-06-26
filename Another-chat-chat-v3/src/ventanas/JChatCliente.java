@@ -4,6 +4,9 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -12,7 +15,9 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JEditorPane;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.JTextArea;
 import java.awt.event.ActionListener;
@@ -41,7 +46,7 @@ public class JChatCliente extends JFrame {
 	private String nombreSala;
 	private JTextField textField;
 	private JButton btnEnviar;
-	private JTextArea textArea;
+	private JTextPane textArea;
 	private JScrollPane scrollPane;
 	private String historialChat;
 	private JList<String> list;
@@ -92,7 +97,7 @@ public class JChatCliente extends JFrame {
 		scrollPane.setBounds(10, 33, 414, 175);
 		contentPane.add(scrollPane);
 
-		textArea = new JTextArea();
+		textArea = new JTextPane();
 		scrollPane.setViewportView(textArea);
 		textArea.setEditable(false);
 		
@@ -142,7 +147,13 @@ public class JChatCliente extends JFrame {
 
 	public void escribirMensajeEnTextArea(String mensaje) {
 		historialChat+=mensaje;
-		textArea.append(mensaje);
+		SimpleAttributeSet attrs = new SimpleAttributeSet();
+		StyleConstants.setForeground(attrs, Color.BLACK);
+		try {
+			textArea.getStyledDocument().insertString(textArea.getStyledDocument().getLength(), mensaje, attrs);
+		} catch (BadLocationException e1) {
+			e1.printStackTrace();
+		}
 		try {
 			sonidoMsj();
 		} catch (LineUnavailableException e) {
@@ -156,9 +167,13 @@ public class JChatCliente extends JFrame {
 	
 	public void escribirMsjPrivaEnTextArea(String mensaje) {
 		historialChat+=mensaje;
-		textArea.setSelectedTextColor(Color.RED);
-		textArea.append("*PRIVATE*"+mensaje+"");
-		//textArea.setSelectedTextColor(Color.black);
+		SimpleAttributeSet attrs = new SimpleAttributeSet();
+		StyleConstants.setForeground(attrs, Color.RED);
+		try {
+			textArea.getStyledDocument().insertString(textArea.getStyledDocument().getLength(), mensaje, attrs);
+		} catch (BadLocationException e1) {
+			e1.printStackTrace();
+		}
 		try {
 			sonidoMsj();
 		} catch (LineUnavailableException e) {
