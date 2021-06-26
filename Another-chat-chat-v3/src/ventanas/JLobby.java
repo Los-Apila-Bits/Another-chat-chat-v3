@@ -23,7 +23,7 @@ import servidor.Paquete;
 import javax.swing.JLabel;
 import java.awt.Font;
 
-public class JLobby extends JFrame {	
+public class JLobby extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JList<String> list;
@@ -33,7 +33,10 @@ public class JLobby extends JFrame {
 	private JButton unirseSalaButton;
 	private Cliente cliente;
 	private int salasActivas = 0;
-	
+	private JMenuBar menuBar;
+	private JMenu mnOpciones;
+	private JMenuItem MenuConectar;
+
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -49,7 +52,15 @@ public class JLobby extends JFrame {
 	}
 
 	public JLobby() {
-		this.addWindowListener(new WindowAdapter() {
+		iniFrame();
+		iniButtonCrearSala();
+		iniLista();
+		iniButtonUnirse();
+		iniMenuOpciones();
+	}
+
+	private void iniFrame() {
+		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				cliente.ejecutarComando(new Desconectar());
@@ -58,20 +69,20 @@ public class JLobby extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(null);
 		setBounds(50, 50, 358, 308);
-		iniButtonCrearSala();
-		iniLista();
-		iniButtonUnirse();
-		JMenuBar menuBar = new JMenuBar();
+	}
+
+	public void iniMenuOpciones() {
+		menuBar = new JMenuBar();
 		menuBar.setBounds(0, 0, 342, 22);
 		getContentPane().add(menuBar);
-		JMenu mnOpciones = new JMenu("Opciones");
+		mnOpciones = new JMenu("Opciones");
 		menuBar.add(mnOpciones);
-		JMenuItem MenuConectar = new JMenuItem("Conectar");
+		MenuConectar = new JMenuItem("Conectar");
 		mnOpciones.add(MenuConectar);
 		MenuConectar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String nombre = JOptionPane.showInputDialog("Ingrese nombre de usuario");
-				cliente = new Cliente(1200,"localhost",nombre);
+				cliente = new Cliente(1200, "localhost", nombre);
 				mnOpciones.setEnabled(false);
 				cliente.inicializarHiloCliente(getLobby());
 				cliente.ejecutarComando(new Conectarse(new Paquete(cliente)));
@@ -80,9 +91,9 @@ public class JLobby extends JFrame {
 			}
 		});
 	}
-	
+
 	public void iniLista() {
-		model = new DefaultListModel<String>();	
+		model = new DefaultListModel<String>();
 		list = new JList<String>();
 		listScroller = new JScrollPane(list);
 		listScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -101,7 +112,7 @@ public class JLobby extends JFrame {
 		crearSalaButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String nombre = JOptionPane.showInputDialog("Ingrese el nombre de la sala");
-				if(nombre!=null && nombre!="")
+				if (nombre != null && nombre != "")
 					cliente.ejecutarComando(new CrearSala(nombre));
 			}
 		});
@@ -120,18 +131,18 @@ public class JLobby extends JFrame {
 		unirseSalaButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String nombresala = list.getSelectedValue();
-				if(salasActivas==3) {
-					JOptionPane.showMessageDialog(null, "No puedes estar conectado\nen mas de 3 salas");
+				if (salasActivas == 3) {
+					maxConexiones();
 					return;
 				}
-				if(nombresala!=null) {
+				if (nombresala != null) {
 					nombresala = nombresala.substring(0, nombresala.indexOf(" ("));
 					cliente.ejecutarComando(new UnirseSala(nombresala));
 				}
 			}
 		});
 	}
-	
+
 	public void actualizar_salas(List<String> salas) {
 		model.clear();
 		Collections.sort(salas);
@@ -144,23 +155,23 @@ public class JLobby extends JFrame {
 	public JList<String> getLista() {
 		return this.list;
 	}
-	
+
 	public Cliente getCliente() {
 		return this.cliente;
 	}
-	
+
 	public void maxConexiones() {
-		JOptionPane.showMessageDialog(unirseSalaButton, "Ya estas conectado a 3 salas");
+		JOptionPane.showMessageDialog(null, "No puedes estar conectado\nen mas de 3 salas");
 	}
-	
+
 	public JLobby getLobby() {
 		return this;
 	}
-	
+
 	public void setSalasActivas(int n) {
-		this.salasActivas=n;
+		this.salasActivas = n;
 	}
-	
+
 	public int getSalasActivas() {
 		return this.salasActivas;
 	}

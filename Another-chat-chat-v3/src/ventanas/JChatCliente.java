@@ -43,10 +43,11 @@ public class JChatCliente extends JFrame {
 	private JTextArea textArea;
 	private JScrollPane scrollPane;
 	private String historialChat;
-	
 	private JList<String> list;
 	private JScrollPane listScroller;
-
+	private JButton btnDecargar;
+	private JButton btnMsjPrivado;
+	
 	public JChatCliente(Cliente cliente, String nombreSala) {
 		this.cliente = cliente;
 		this.nombreSala = nombreSala;
@@ -75,14 +76,14 @@ public class JChatCliente extends JFrame {
 		});
 
 		btnEnviar = new JButton("Enviar");
+		btnEnviar.setBounds(335, 219, 89, 31);
+		contentPane.add(btnEnviar);
 		btnEnviar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				enviarMsj();
 				textField.setText("");
 			}
 		});
-		btnEnviar.setBounds(335, 219, 89, 31);
-		contentPane.add(btnEnviar);
 
 		scrollPane = new JScrollPane();
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -94,7 +95,9 @@ public class JChatCliente extends JFrame {
 		scrollPane.setViewportView(textArea);
 		textArea.setEditable(false);
 		
-		JButton btnDecargar = new JButton(new ImageIcon("icon.png"));
+		btnDecargar = new JButton(new ImageIcon("icon.png"));
+		btnDecargar.setBounds(10, 3, 36, 30);
+		contentPane.add(btnDecargar);
 		btnDecargar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -108,8 +111,6 @@ public class JChatCliente extends JFrame {
 				}
 			}
 		});
-		btnDecargar.setBounds(10, 3, 36, 30);
-		contentPane.add(btnDecargar);
 		
 		list = new JList<String>();
 		listScroller = new JScrollPane(list);
@@ -119,7 +120,9 @@ public class JChatCliente extends JFrame {
 		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		contentPane.add(listScroller);
 		
-		JButton btnMsjPrivado = new JButton("Private MSJ");
+		btnMsjPrivado = new JButton("Private MSJ");
+		btnMsjPrivado.setBounds(445, 219, 150, 31);
+		contentPane.add(btnMsjPrivado);
 		btnMsjPrivado.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				enviarMsjPrivado();
@@ -130,14 +133,7 @@ public class JChatCliente extends JFrame {
 				escribirMsjPrivaEnTextArea("[" + formatDateTime + "] " + cliente.getNombre() + ": " + message + "\n");
 				textField.setText("");
 			}
-		});
-		btnMsjPrivado.setBounds(445, 219, 150, 31);
-		contentPane.add(btnMsjPrivado);
-		
-	}
-
-	public JChatCliente iniciar() {
-		return this;
+		});	
 	}
 
 	public void escribirMensajeEnTextArea(String mensaje) {
@@ -202,6 +198,10 @@ public class JChatCliente extends JFrame {
 	
 	public String getSala() {
 		return this.nombreSala;
+	}
+	
+	public JChatCliente iniciar() {
+		return this;
 	}
 	
 	public void run() {
