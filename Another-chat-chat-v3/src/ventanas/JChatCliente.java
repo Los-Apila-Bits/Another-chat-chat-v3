@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
@@ -127,13 +128,16 @@ public class JChatCliente extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				enviarMsjPrivado();
 				String message = textField.getText();
-				LocalDateTime now = LocalDateTime.now();
-				DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-				String formatDateTime = now.format(format);
-				escribirMsjPrivaEnTextArea("[" + formatDateTime + "] " + cliente.getNombre() + ": " + message + "\n");
-				textField.setText("");
+				if (!message.isEmpty()) {
+					LocalDateTime now = LocalDateTime.now();
+					DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+					String formatDateTime = now.format(format);
+					escribirMsjPrivaEnTextArea("[" + formatDateTime + "] " + cliente.getNombre() + ": " + message + "\n");
+					textField.setText("");		
+				}
 			}
 		});	
+		setResizable(false);
 	}
 
 	public void escribirMensajeEnTextArea(String mensaje) {
@@ -152,7 +156,9 @@ public class JChatCliente extends JFrame {
 	
 	public void escribirMsjPrivaEnTextArea(String mensaje) {
 		historialChat+=mensaje;
+		textArea.setSelectedTextColor(Color.RED);
 		textArea.append("*PRIVATE*"+mensaje+"");
+		//textArea.setSelectedTextColor(Color.black);
 		try {
 			sonidoMsj();
 		} catch (LineUnavailableException e) {
@@ -183,7 +189,8 @@ public class JChatCliente extends JFrame {
 		if (!message.isEmpty()) {
 			nombre = list.getSelectedValue();
 			nombre = nombre.substring(0, nombre.indexOf(" ("));
-			cliente.ejecutarComando(new EnviarMsjPrivado(nombreSala, nombre,"[" + formatDateTime + "] " + cliente.getNombre() + ": " + message + "\n"));
+			if(!nombre.equals(cliente.getNombre()))
+				cliente.ejecutarComando(new EnviarMsjPrivado(nombreSala, nombre,"[" + formatDateTime + "] " + cliente.getNombre() + ": " + message + "\n"));
 		}
 		return;
 	}

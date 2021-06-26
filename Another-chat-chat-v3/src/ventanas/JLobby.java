@@ -57,6 +57,7 @@ public class JLobby extends JFrame {
 		iniLista();
 		iniButtonUnirse();
 		iniMenuOpciones();
+		setResizable(false);
 	}
 
 	private void iniFrame() {
@@ -82,12 +83,14 @@ public class JLobby extends JFrame {
 		MenuConectar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String nombre = JOptionPane.showInputDialog("Ingrese nombre de usuario");
-				cliente = new Cliente(1200, "localhost", nombre);
-				mnOpciones.setEnabled(false);
-				cliente.inicializarHiloCliente(getLobby());
-				cliente.ejecutarComando(new Conectarse(new Paquete(cliente)));
-				unirseSalaButton.setEnabled(true);
-				crearSalaButton.setEnabled(true);
+				if(nombre != null) {
+					cliente = new Cliente(1200, "localhost", nombre);
+					mnOpciones.setEnabled(false);
+					cliente.inicializarHiloCliente(getLobby());
+					cliente.ejecutarComando(new Conectarse(new Paquete(cliente)));
+					unirseSalaButton.setEnabled(true);
+					crearSalaButton.setEnabled(true);
+				}
 			}
 		});
 	}
