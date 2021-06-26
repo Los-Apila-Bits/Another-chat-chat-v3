@@ -15,11 +15,9 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.JTextArea;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -53,10 +51,21 @@ public class JChatCliente extends JFrame {
 	private JScrollPane listScroller;
 	private JButton btnDecargar;
 	private JButton btnMsjPrivado;
-	
+
 	public JChatCliente(Cliente cliente, String nombreSala) {
 		this.cliente = cliente;
 		this.nombreSala = nombreSala;
+		iniFrame();
+		iniBotonEnviar();
+		iniBotonMensajePrivado();
+		iniJTextField();
+		iniTextArea();
+		iniBotonDescargar();
+		iniList();
+		setResizable(false);
+	}
+	
+	private void iniFrame() {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
@@ -69,63 +78,9 @@ public class JChatCliente extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
 		setContentPane(contentPane);
-
-		textField = new JTextField();
-		textField.setBounds(10, 219, 312, 31);
-		contentPane.add(textField);
-		textField.setColumns(10);
-		textField.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				enviarMsj();
-				textField.setText("");
-			}
-		});
-
-		btnEnviar = new JButton("Enviar");
-		btnEnviar.setBounds(335, 219, 89, 31);
-		contentPane.add(btnEnviar);
-		btnEnviar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				enviarMsj();
-				textField.setText("");
-			}
-		});
-
-		scrollPane = new JScrollPane();
-		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane.setBounds(10, 33, 414, 175);
-		contentPane.add(scrollPane);
-
-		textArea = new JTextPane();
-		scrollPane.setViewportView(textArea);
-		textArea.setEditable(false);
-		
-		btnDecargar = new JButton(new ImageIcon("icon.png"));
-		btnDecargar.setBounds(10, 3, 36, 30);
-		contentPane.add(btnDecargar);
-		btnDecargar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss--");
-					PrintWriter salida = new PrintWriter(new File("Descargas/"+dtf.format(LocalDateTime.now())
-					+nombreSala+"-"+cliente.getNombre()+".txt"));
-					salida.println(historialChat);
-					salida.close();
-				} catch (FileNotFoundException e1) {
-					e1.printStackTrace();
-				}
-			}
-		});
-		
-		list = new JList<String>();
-		listScroller = new JScrollPane(list);
-		listScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		listScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		listScroller.setBounds(445, 33, 150, 175);
-		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-		contentPane.add(listScroller);
-		
+	}
+	
+	private void iniBotonMensajePrivado() {
 		btnMsjPrivado = new JButton("Private MSJ");
 		btnMsjPrivado.setBounds(445, 219, 150, 31);
 		contentPane.add(btnMsjPrivado);
@@ -137,16 +92,81 @@ public class JChatCliente extends JFrame {
 					LocalDateTime now = LocalDateTime.now();
 					DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 					String formatDateTime = now.format(format);
-					escribirMsjPrivaEnTextArea("[" + formatDateTime + "] " + cliente.getNombre() + ": " + message + "\n");
-					textField.setText("");		
+					escribirMsjPrivaEnTextArea(
+							"[" + formatDateTime + "] " + cliente.getNombre() + ": " + message + "\n");
+					textField.setText("");
 				}
 			}
-		});	
-		setResizable(false);
+		});
+	}
+	
+	private void iniList() {
+		list = new JList<String>();
+		listScroller = new JScrollPane(list);
+		listScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		listScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		listScroller.setBounds(445, 33, 150, 175);
+		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		contentPane.add(listScroller);
+	}
+	
+	private void iniBotonDescargar() {
+		btnDecargar = new JButton(new ImageIcon("icon.png"));
+		btnDecargar.setBounds(10, 3, 36, 30);
+		contentPane.add(btnDecargar);
+		btnDecargar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy-HH-mm-ss--");
+					PrintWriter salida = new PrintWriter(new File("Descargas/" + dtf.format(LocalDateTime.now())
+							+ nombreSala + "-" + cliente.getNombre() + ".txt"));
+					salida.println(historialChat);
+					salida.close();
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	private void iniTextArea() {
+		scrollPane = new JScrollPane();
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setBounds(10, 33, 414, 175);
+		contentPane.add(scrollPane);
+		textArea = new JTextPane();
+		textArea.setEditable(false);
+		scrollPane.setViewportView(textArea);
+	}
+	
+	private void iniJTextField() {
+		textField = new JTextField();
+		textField.setBounds(10, 219, 312, 31);
+		contentPane.add(textField);
+		textField.setColumns(10);
+		textField.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				enviarMsj();
+				textField.setText("");
+			}
+		});
+	}
+
+	private void iniBotonEnviar() {
+		btnEnviar = new JButton("Enviar");
+		btnEnviar.setBounds(335, 219, 89, 31);
+		contentPane.add(btnEnviar);
+		btnEnviar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				enviarMsj();
+				textField.setText("");
+			}
+		});
 	}
 
 	public void escribirMensajeEnTextArea(String mensaje) {
-		historialChat+=mensaje;
+		historialChat += mensaje;
 		SimpleAttributeSet attrs = new SimpleAttributeSet();
 		StyleConstants.setForeground(attrs, Color.BLACK);
 		try {
@@ -164,9 +184,9 @@ public class JChatCliente extends JFrame {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void escribirMsjPrivaEnTextArea(String mensaje) {
-		historialChat+=mensaje;
+		historialChat += mensaje;
 		SimpleAttributeSet attrs = new SimpleAttributeSet();
 		StyleConstants.setForeground(attrs, Color.RED);
 		try {
@@ -191,21 +211,22 @@ public class JChatCliente extends JFrame {
 		DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 		String formatDateTime = now.format(format);
 		if (!message.isEmpty())
-			cliente.ejecutarComando(new EnviarMsj(nombreSala, "[" + formatDateTime + "] " + cliente.getNombre() + ": " + message + "\n"));
+			cliente.ejecutarComando(new EnviarMsj(nombreSala,
+					"[" + formatDateTime + "] " + cliente.getNombre() + ": " + message + "\n"));
 		return;
 	}
-	
+
 	public void enviarMsjPrivado() {
 		String message = textField.getText();
 		LocalDateTime now = LocalDateTime.now();
 		DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 		String formatDateTime = now.format(format);
-		String nombre;
-		if (!message.isEmpty()) {
-			nombre = list.getSelectedValue();
+		String nombre = list.getSelectedValue();
+		if (!message.isEmpty() && nombre != null) {
 			nombre = nombre.substring(0, nombre.indexOf(" ("));
-			if(!nombre.equals(cliente.getNombre()))
-				cliente.ejecutarComando(new EnviarMsjPrivado(nombreSala, nombre,"[" + formatDateTime + "] " + cliente.getNombre() + ": " + message + "\n"));
+			if (!nombre.equals(cliente.getNombre()))
+				cliente.ejecutarComando(new EnviarMsjPrivado(nombreSala, nombre,
+						"[" + formatDateTime + "] " + cliente.getNombre() + ": " + message + "\n"));
 		}
 		return;
 	}
@@ -217,20 +238,20 @@ public class JChatCliente extends JFrame {
 		clip.open(audioInputStream);
 		clip.start();
 	}
-	
+
 	public String getSala() {
 		return this.nombreSala;
 	}
-	
+
 	public JChatCliente iniciar() {
 		return this;
 	}
-	
+
 	public void run() {
-			this.setTitle("Sala: "+nombreSala+" | Usuario: "+cliente.getNombre());
-			this.setVisible(true);
+		this.setTitle("Sala: " + nombreSala + " | Usuario: " + cliente.getNombre());
+		this.setVisible(true);
 	}
-	
+
 	public void actualziar_ons(DefaultListModel<String> model) {
 		list.setModel(model);
 	}
