@@ -46,7 +46,7 @@ public class JChatCliente extends JFrame {
 	private JButton btnEnviar;
 	private JTextPane textArea;
 	private JScrollPane scrollPane;
-	private String historialChat;
+	private String historialChat = "";
 	private JList<String> list;
 	private JScrollPane listScroller;
 	private JButton btnDecargar;
