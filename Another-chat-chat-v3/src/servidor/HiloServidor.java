@@ -67,7 +67,7 @@ public class HiloServidor extends Thread {
 					break;
 				}
 				default:
-					throw new IllegalArgumentException("Unexpected value: " + caso);
+					break;
 				}
 
 			}

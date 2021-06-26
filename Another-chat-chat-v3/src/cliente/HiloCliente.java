@@ -97,13 +97,11 @@ public class HiloCliente extends Thread {
 	}
 
 	private void unirse_sala() throws IOException {
-		// if(salasConectadas < 3) {
 		String sala = entrada.readUTF();
 		chats.add(new JChatCliente(menu.getCliente(), sala));
 		chats.get(salasConectadas).run();
 		salasConectadas++;
 		menu.setSalasActivas(salasConectadas);
-		// }
 	}
 
 	private void enviar_msj() throws IOException {

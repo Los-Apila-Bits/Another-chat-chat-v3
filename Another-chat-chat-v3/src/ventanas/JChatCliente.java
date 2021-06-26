@@ -123,6 +123,11 @@ public class JChatCliente extends JFrame {
 		btnMsjPrivado.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				enviarMsjPrivado();
+				String message = textField.getText();
+				LocalDateTime now = LocalDateTime.now();
+				DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+				String formatDateTime = now.format(format);
+				escribirMsjPrivaEnTextArea("[" + formatDateTime + "] " + cliente.getNombre() + ": " + message + "\n");
 				textField.setText("");
 			}
 		});
@@ -151,7 +156,7 @@ public class JChatCliente extends JFrame {
 	
 	public void escribirMsjPrivaEnTextArea(String mensaje) {
 		historialChat+=mensaje;
-		textArea.append("**"+mensaje+"**");
+		textArea.append("*PRIVATE*"+mensaje+"");
 		try {
 			sonidoMsj();
 		} catch (LineUnavailableException e) {
@@ -200,7 +205,7 @@ public class JChatCliente extends JFrame {
 	}
 	
 	public void run() {
-			this.setTitle("Chat");
+			this.setTitle("Sala: "+nombreSala+" | Usuario: "+cliente.getNombre());
 			this.setVisible(true);
 	}
 	
