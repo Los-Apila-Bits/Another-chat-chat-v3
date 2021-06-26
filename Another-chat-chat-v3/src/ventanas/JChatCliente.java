@@ -1,6 +1,7 @@
 package ventanas;
 
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.sound.sampled.AudioInputStream;
@@ -8,9 +9,11 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.JTextArea;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -27,6 +30,7 @@ import javax.swing.ScrollPaneConstants;
 import cliente.*;
 import comandos.AbandonarSala;
 import comandos.EnviarMsj;
+import comandos.EnviarMsjPrivado;
 
 public class JChatCliente extends JFrame {
 
@@ -39,6 +43,9 @@ public class JChatCliente extends JFrame {
 	private JTextArea textArea;
 	private JScrollPane scrollPane;
 	private String historialChat;
+	
+	private JList<String> list;
+	private JScrollPane listScroller;
 
 	public JChatCliente(Cliente cliente, String nombreSala) {
 		this.cliente = cliente;
@@ -50,7 +57,7 @@ public class JChatCliente extends JFrame {
 			}
 		});
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 633, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
@@ -104,6 +111,24 @@ public class JChatCliente extends JFrame {
 		btnDecargar.setBounds(10, 3, 36, 30);
 		contentPane.add(btnDecargar);
 		
+		list = new JList<String>();
+		listScroller = new JScrollPane(list);
+		listScroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		listScroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		listScroller.setBounds(445, 33, 150, 175);
+		list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		contentPane.add(listScroller);
+		
+		JButton btnMsjPrivado = new JButton("Private MSJ");
+		btnMsjPrivado.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				enviarMsjPrivado();
+				textField.setText("");
+			}
+		});
+		btnMsjPrivado.setBounds(445, 219, 150, 31);
+		contentPane.add(btnMsjPrivado);
+		
 	}
 
 	public JChatCliente iniciar() {
@@ -113,6 +138,20 @@ public class JChatCliente extends JFrame {
 	public void escribirMensajeEnTextArea(String mensaje) {
 		historialChat+=mensaje;
 		textArea.append(mensaje);
+		try {
+			sonidoMsj();
+		} catch (LineUnavailableException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (UnsupportedAudioFileException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void escribirMsjPrivaEnTextArea(String mensaje) {
+		historialChat+=mensaje;
+		textArea.append("**"+mensaje+"**");
 		try {
 			sonidoMsj();
 		} catch (LineUnavailableException e) {
@@ -133,6 +172,20 @@ public class JChatCliente extends JFrame {
 			cliente.ejecutarComando(new EnviarMsj(nombreSala, "[" + formatDateTime + "] " + cliente.getNombre() + ": " + message + "\n"));
 		return;
 	}
+	
+	public void enviarMsjPrivado() {
+		String message = textField.getText();
+		LocalDateTime now = LocalDateTime.now();
+		DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+		String formatDateTime = now.format(format);
+		String nombre;
+		if (!message.isEmpty()) {
+			nombre = list.getSelectedValue();
+			nombre = nombre.substring(0, nombre.indexOf(" ("));
+			cliente.ejecutarComando(new EnviarMsjPrivado(nombreSala, nombre,"[" + formatDateTime + "] " + cliente.getNombre() + ": " + message + "\n"));
+		}
+		return;
+	}
 
 	public void sonidoMsj() throws LineUnavailableException, IOException, UnsupportedAudioFileException {
 		String soundName = "sonidos/sonido_msn.wav";
@@ -149,5 +202,9 @@ public class JChatCliente extends JFrame {
 	public void run() {
 			this.setTitle("Chat");
 			this.setVisible(true);
+	}
+	
+	public void actualziar_ons(DefaultListModel<String> model) {
+		list.setModel(model);
 	}
 }

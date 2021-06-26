@@ -4,6 +4,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+import javax.swing.DefaultListModel;
+
 import comandos.*;
 
 public class HiloServidor extends Thread {
@@ -51,6 +55,11 @@ public class HiloServidor extends Thread {
 				case Comando.ABANDONAR_SALA: {
 					AbandonarSala cmd = (AbandonarSala) comando;
 					comando_abandonar_sala(cmd.sala);
+					break;
+				}
+				case Comando.ENVIAR_MSJ_PRIV: {
+					EnviarMsjPrivado cmd = (EnviarMsjPrivado) comando;
+					comando_enviar_msj_priv(cmd.mensaje,cmd.nombreSala, cmd.nombre);
 					break;
 				}
 				case Comando.DESCONECTAR: {
@@ -128,6 +137,7 @@ public class HiloServidor extends Thread {
 			Servidor.getSalidas().get(cliente).flush();
 			Servidor.getSalidas().get(cliente).writeUTF(nombreSala);
 			Servidor.getSalidas().get(cliente).flush();
+			actualizar_on(nombreSala);
 			comando_actualizar_salas();
 		}
 	}
@@ -141,6 +151,7 @@ public class HiloServidor extends Thread {
 		Servidor.getSalidas().get(cliente).flush();
 		Servidor.getSalidas().get(cliente).writeUTF(nombreSala);
 		Servidor.getSalidas().get(cliente).flush();
+		actualizar_on(nombreSala);
 	}
 
 	public void comando_enviar_msj(String nombreSala, String msj) throws IOException {
@@ -155,6 +166,7 @@ public class HiloServidor extends Thread {
 			receptor.getSalida().flush();
 		}
 	}
+	
 	public void comando_desconectar() throws IOException {
 		this.ejecutar = false;
 		cliente.close();
@@ -162,5 +174,41 @@ public class HiloServidor extends Thread {
 		pcliente.getSalida().writeInt(Comando.DESCONECTAR);
 		//entrada.close();
 		
+	}
+	
+	public void actualizar_on(String nombreSala) throws IOException{
+		List<Paquete> receptores = Servidor.getSalas().get(nombreSala);
+		DefaultListModel<String> model = new DefaultListModel<>();
+		long hora;
+		Date horaActual = new Date();
+		for (Paquete paquete : receptores) {
+			hora = horaActual.getTime()-paquete.getSalasDate().get(nombreSala);
+			hora = TimeUnit.MINUTES.convert(hora, TimeUnit.MILLISECONDS);
+			model.addElement(paquete.getNombre()+ " ("+hora+" mins)");
+		}
+		for (Paquete receptor : receptores) {
+			receptor.getSalida().flush();
+			receptor.getSalida().writeInt(Comando.ACTUALIZAR_ONS);
+			receptor.getSalida().flush();
+			receptor.getSalida().writeUTF(nombreSala);
+			receptor.getSalida().flush();
+			receptor.getSalida().writeObject(model);
+			receptor.getSalida().flush();
+		}
+	}
+	
+	public void comando_enviar_msj_priv(String mensaje, String nombreSala, String nombre) throws IOException {
+		List<Paquete> receptores = Servidor.getSalas().get(nombreSala);
+		for (Paquete receptor : receptores) {
+			if(receptor.getNombre().equals(nombre)) {
+				receptor.getSalida().writeInt(Comando.ENVIAR_MSJ_PRIV);
+				receptor.getSalida().flush();
+				receptor.getSalida().writeUTF(nombreSala);
+				receptor.getSalida().flush();
+				receptor.getSalida().writeUTF(mensaje);
+				receptor.getSalida().flush();
+				return;
+			}
+		}
 	}
 }

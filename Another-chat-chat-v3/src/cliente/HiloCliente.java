@@ -5,6 +5,9 @@ import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.DefaultListModel;
+
 import comandos.Comando;
 import ventanas.JChatCliente;
 import ventanas.JLobby;
@@ -57,6 +60,14 @@ public class HiloCliente extends Thread {
 					desconectar();
 					break;
 				}
+				case Comando.ACTUALIZAR_ONS: {
+					actualizar_ons();
+					break;
+				}
+				case Comando.ENVIAR_MSJ_PRIV: {
+					enviar_msj_priv();
+					break;
+				}
 				default:
 					break;
 				}
@@ -66,59 +77,81 @@ public class HiloCliente extends Thread {
 		}
 
 	}
-	
+
 	private void actualizar_sala() throws ClassNotFoundException, IOException {
 		@SuppressWarnings("unchecked")
 		List<String> salas = (List<String>) entrada.readObject();
 		menu.actualizar_salas(salas);
 	}
-	
+
 	private void conectarse() throws ClassNotFoundException, IOException {
 		@SuppressWarnings("unchecked")
 		List<String> salas = (List<String>) entrada.readObject();
 		menu.actualizar_salas(salas);
 	}
-	
+
 	private void crear_sala() throws ClassNotFoundException, IOException {
 		@SuppressWarnings("unchecked")
 		List<String> salas = (List<String>) entrada.readObject();
 		menu.actualizar_salas(salas);
 	}
-	
+
 	private void unirse_sala() throws IOException {
-		//if(salasConectadas < 3) {
-			String sala = entrada.readUTF();
-			chats.add(new JChatCliente(menu.getCliente(), sala));
-			chats.get(salasConectadas).run();
-			salasConectadas++;
-			menu.setSalasActivas(salasConectadas);
-		//}
+		// if(salasConectadas < 3) {
+		String sala = entrada.readUTF();
+		chats.add(new JChatCliente(menu.getCliente(), sala));
+		chats.get(salasConectadas).run();
+		salasConectadas++;
+		menu.setSalasActivas(salasConectadas);
+		// }
 	}
-	
+
 	private void enviar_msj() throws IOException {
 		String nombreSala = entrada.readUTF();
 		String mensaje = entrada.readUTF();
 		for (JChatCliente chat : chats) {
-			if(chat.getSala().equals(nombreSala))
+			if (chat.getSala().equals(nombreSala))
 				chat.escribirMensajeEnTextArea(mensaje);
 		}
 	}
-	
+
 	private void abandonar_sala() throws IOException {
 		String sala = entrada.readUTF();
 		salasConectadas--;
 		menu.setSalasActivas(salasConectadas);
 		for (Iterator<JChatCliente> iterator = chats.iterator(); iterator.hasNext();) {
 			JChatCliente chat = (JChatCliente) iterator.next();
-			if(chat.getSala().equals(sala)) {
+			if (chat.getSala().equals(sala)) {
 				iterator.remove();
 				return;
 			}
 		}
 	}
+
 	private void desconectar() throws IOException, ClassNotFoundException {
 		this.ejecutar = false;
 		menu.getCliente().getSalida().close();
-		menu.getCliente().getSocket().close();	
+		menu.getCliente().getSocket().close();
+	}
+
+	private void actualizar_ons() throws IOException, ClassNotFoundException {
+		String sala = entrada.readUTF();
+		@SuppressWarnings("unchecked")
+		DefaultListModel<String> nombres = (DefaultListModel<String>) entrada.readObject();
+		for (JChatCliente chat : chats) {
+			if (chat.getSala().equals(sala)) {
+				chat.actualziar_ons(nombres);
+				return;
+			}
+		}
+	}
+
+	private void enviar_msj_priv() throws IOException {
+		String nombreSala = entrada.readUTF();
+		String mensaje = entrada.readUTF();
+		for (JChatCliente chat : chats) {
+			if (chat.getSala().equals(nombreSala))
+				chat.escribirMsjPrivaEnTextArea(mensaje);
+		}
 	}
 }
